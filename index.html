@@ -103,30 +103,31 @@
 
     /* HOVER OVERLAY */
     .poster-overlay {
-      position:absolute; inset:0;
-      background:linear-gradient(to top, rgba(0,0,0,.97) 0%, rgba(0,0,0,.75) 55%, rgba(0,0,0,.2) 100%);
-      display:flex; flex-direction:column; justify-content:flex-end; padding:.65rem .6rem;
+      position:absolute; left:0; right:0; bottom:0;
+      background:linear-gradient(to top, rgba(0,0,0,.96) 0%, rgba(0,0,0,.7) 70%, transparent 100%);
+      padding:2rem .6rem .6rem;
       opacity:0; transition:opacity .22s ease;
       pointer-events:none;
+      z-index:2;
     }
     .anime-poster:hover .poster-overlay { opacity:1; pointer-events:all; }
     .overlay-title {
-      font-size:.72rem; font-weight:500; color:#fff; line-height:1.3;
-      margin-bottom:.5rem;
-      display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+      font-size:.7rem; font-weight:500; color:#fff; line-height:1.3;
+      margin-bottom:.45rem;
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
     }
-    .overlay-actions { display:flex; flex-direction:column; gap:.35rem; }
+    .overlay-actions { display:flex; flex-direction:column; gap:.3rem; }
     .overlay-btn {
-      width:100%; padding:.38rem .5rem; border-radius:6px; border:none;
-      font-size:.72rem; font-weight:500; cursor:pointer;
+      width:100%; padding:.36rem .5rem; border-radius:6px; border:none;
+      font-size:.7rem; font-weight:500; cursor:pointer;
       transition:filter .15s, transform .1s; text-align:center; font-family:'Inter',sans-serif;
     }
-    .overlay-btn:hover { filter:brightness(1.15); transform:scale(1.02); }
+    .overlay-btn:hover { filter:brightness(1.18); }
     .overlay-btn:active { transform:scale(0.97); }
-    .overlay-btn.ob-fav     { background:rgba(232,160,48,.18);  color:#e8a030; border:.5px solid rgba(232,160,48,.4); }
-    .overlay-btn.ob-watch   { background:rgba(39,174,96,.15);   color:#70c070; border:.5px solid rgba(39,174,96,.35); }
-    .overlay-btn.ob-fav.added    { background:rgba(232,160,48,.38); }
-    .overlay-btn.ob-watch.added  { background:rgba(39,174,96,.32); }
+    .overlay-btn.ob-fav   { background:rgba(232,160,48,.2); color:#e8a030; border:.5px solid rgba(232,160,48,.45); }
+    .overlay-btn.ob-watch { background:rgba(39,174,96,.18); color:#70c070; border:.5px solid rgba(39,174,96,.4); }
+    .overlay-btn.ob-fav.added   { background:rgba(232,160,48,.4); }
+    .overlay-btn.ob-watch.added { background:rgba(39,174,96,.35); }
 
     /* LOAD MORE */
     .load-more-btn { display:block; width:100%; margin-top:1.25rem; padding:.75rem; background:transparent; border:.5px solid var(--border); border-radius:9px; color:var(--dim); cursor:pointer; font-size:.85rem; transition:all .2s; font-family:'Inter',sans-serif; }
@@ -488,49 +489,25 @@
     recState = { genreIds, minScore, mediaType, genrePage:1, simDone:false, genreDone:false, excludeIds };
 
     try {
-      // Similar from watched+favorites
+      // Similar from watched+favorites — fetch all in parallel (no sequential delays)
       const simAnime = [];
       const simSeen  = new Set();
       if (allSources.length) {
         const fetches = await Promise.allSettled(
-          allSources.slice(0,8).map(async (w,i) => {
-            await delay(i*350);
-            const r = await fetch(`${JIKAN}/anime/${w.id}/recommendations`);
-            const d = await r.json();
-            return (d.data||[]).map(x=>x.entry);
-          })
+          allSources.slice(0,8).map(w => fetch(`${JIKAN}/anime/${w.id}/recommendations`).then(r=>r.json()))
         );
         fetches.forEach(r => {
-          if (r.status==="fulfilled") r.value.forEach(a => {
-            if (!simSeen.has(a.mal_id)) { simSeen.add(a.mal_id); simAnime.push(a); }
+          if (r.status==="fulfilled") (r.value.data||[]).forEach(x => {
+            if (!simSeen.has(x.entry.mal_id)) { simSeen.add(x.entry.mal_id); simAnime.push(x.entry); }
           });
         });
       }
 
-      // Enrich ALL similar entries with real scores via /anime/{id}
-      // Process in parallel batches of 4 with delays to respect rate limits
-      const toEnrich = simAnime.filter(a => !excludeIds.has(a.mal_id));
-      const batchSize = 4;
-      for (let i = 0; i < toEnrich.length; i += batchSize) {
-        await delay(i === 0 ? 100 : 500);
-        await Promise.allSettled(toEnrich.slice(i, i + batchSize).map(async a => {
-          try {
-            const r = await fetch(`${JIKAN}/anime/${a.mal_id}`);
-            const d = await r.json();
-            if (d.data) {
-              a.score  = d.data.score  ?? a.score;
-              a.images = d.data.images ?? a.images;
-            }
-          } catch {}
-        }));
-      }
-
       const filteredSim = simAnime
-        .filter(a => !excludeIds.has(a.mal_id) && (!minScore||(a.score&&a.score>=minScore)))
-        .sort((a,b)=>(b.score||0)-(a.score||0));
+        .filter(a => !excludeIds.has(a.mal_id))
+        .sort((a,b) => (b.score||0) - (a.score||0));
 
-      // Genre picks — page 1
-      await delay(300);
+      // Genre picks — page 1 (these always have scores)
       const { genreAnime, hasMore } = await fetchGenrePage(1);
       genreAnime.forEach(a => excludeIds.add(a.mal_id));
       recState.genreDone = !hasMore;
@@ -550,18 +527,20 @@
           <div class="results-grid">${filteredSim.map(posterCard).join("")}</div>
         </div>`;
 
-      if (genreAnime.length) {
-        const filteredG = genreAnime.filter(a=>!recState.excludeIds.has(a.mal_id)||filteredSim.find(x=>x.mal_id===a.mal_id)?false:true);
-        const cleanG = genreAnime.filter(a=> !filteredSim.find(x=>x.mal_id===a.mal_id));
-        html += `
+      const cleanG = genreAnime.filter(a => !filteredSim.find(x => x.mal_id===a.mal_id));
+      if (cleanG.length) html += `
         <div class="results-section" style="margin-top:2rem">
           <div class="results-heading"><span>Top picks by your filters</span></div>
           <div class="results-grid" id="genre-results-grid">${cleanG.map(posterCard).join("")}</div>
           ${!recState.genreDone ? `<button class="load-more-btn" id="load-more-genre" onclick="loadMoreGenre()">Load more anime ↓</button>` : ""}
         </div>`;
-      }
 
       area.innerHTML = html;
+
+      // ── Background score patch: silently fetch real scores for "similar" entries
+      // that have no score, and update the DOM without blocking the UI
+      const noScore = filteredSim.filter(a => !a.score);
+      if (noScore.length) enrichScoresBackground(noScore);
     } catch {
       status.innerHTML=`<div class="err">Something went wrong. Please try again.</div>`;
       btn.disabled = false;
@@ -587,7 +566,6 @@
     if (!btn || recState.genreDone) return;
     btn.disabled = true; btn.textContent = "Loading...";
     try {
-      await delay(300);
       const { genreAnime, hasMore } = await fetchGenrePage(recState.genrePage);
       recState.genrePage++;
       genreAnime.forEach(a => recState.excludeIds.add(a.mal_id));
@@ -598,6 +576,25 @@
       else { btn.disabled=false; btn.textContent="Load more anime ↓"; }
     } catch {
       btn.disabled=false; btn.textContent="Load more anime ↓";
+    }
+  }
+
+  // Silently fetch real scores in background and patch DOM — never blocks the UI
+  async function enrichScoresBackground(list) {
+    for (let i = 0; i < list.length; i++) {
+      await delay(i % 3 === 0 && i > 0 ? 350 : 80);
+      try {
+        const r = await fetch(`${JIKAN}/anime/${list[i].mal_id}`);
+        const d = await r.json();
+        if (!d.data?.score) continue;
+        const score = parseFloat(d.data.score);
+        const color = score >= 8 ? "#27ae60" : score >= 7 ? "#e8a030" : "var(--red)";
+        const scoreEl = document.querySelector(`#poster-${list[i].mal_id} .poster-score`);
+        if (scoreEl) {
+          scoreEl.style.color = color;
+          scoreEl.innerHTML = `★ ${score.toFixed(2).replace(/\.?0+$/,"")}<span style="color:var(--dim)"> / 10</span>`;
+        }
+      } catch {}
     }
   }
 
@@ -612,17 +609,17 @@
     const isFavNow   = inList(favorites, id);
     const isWatchNow = inList(watched,   id);
     return `
-      <div class="anime-poster" id="poster-${id}" onclick="openModal(${id})">
+      <div class="anime-poster" id="poster-${id}" onclick="openModal(${id})" style="cursor:pointer">
         <img src="${img}" alt="${title}" loading="lazy">
-        <div class="poster-overlay" onclick="event.stopPropagation()">
+        <div class="poster-overlay">
           <div class="overlay-title">${a.title}</div>
           <div class="overlay-actions">
             <button class="overlay-btn ob-fav${isFavNow?' added':''}" id="pfav-${id}"
-              onclick="quickAdd('fav',${id},'${title}','${esc(img)}')">
+              onclick="event.stopPropagation();quickAdd('fav',${id},'${title}','${esc(img)}')">
               ${isFavNow ? '⭐ In Favorites' : '☆ Add to Favorites'}
             </button>
             <button class="overlay-btn ob-watch${isWatchNow?' added':''}" id="pwatch-${id}"
-              onclick="quickAdd('watched',${id},'${title}','${esc(img)}')">
+              onclick="event.stopPropagation();quickAdd('watched',${id},'${title}','${esc(img)}')">
               ${isWatchNow ? '✓ In Watched' : '+ Add to Watched'}
             </button>
           </div>
