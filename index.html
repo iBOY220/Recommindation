@@ -543,7 +543,7 @@
     else                       { bw.textContent="+ Want to Watch"; bw.classList.remove("active-want"); }
   }
 
-  // ── RECOMMENDATIONS — paginated, no limit ──
+  // ── RECOMMENDATIONS — purely tag/filter based ──
   const delay = ms => new Promise(r => setTimeout(r,ms));
 
   async function getRecommendations() {
@@ -560,74 +560,36 @@
     btn.disabled = true; area.innerHTML = "";
     status.innerHTML = `<div class="loading-state"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br>Fetching from MyAnimeList...</div>`;
 
-    const allSources = [...new Map([...favorites,...wantToWatch].map(x=>[x.id,x])).values()];
-    const excludeIds = new Set(allSources.map(x=>x.id));
-
-    recState = { genreIds, minScore, mediaType, genrePage:1, simDone:false, genreDone:false, excludeIds };
+    recState = { genreIds, minScore, mediaType, genrePage:1, genreDone:false, excludeIds: new Set() };
 
     try {
-      // Similar from want-to-watch+favorites — fetch all in parallel (no sequential delays)
-      const simAnime = [];
-      const simSeen  = new Set();
-      if (allSources.length) {
-        const fetches = await Promise.allSettled(
-          allSources.slice(0,8).map(w => fetch(`${JIKAN}/anime/${w.id}/recommendations`).then(r=>r.json()))
-        );
-        fetches.forEach(r => {
-          if (r.status==="fulfilled") (r.value.data||[]).forEach(x => {
-            if (!simSeen.has(x.entry.mal_id)) { simSeen.add(x.entry.mal_id); simAnime.push(x.entry); }
-          });
-        });
-      }
-
-      const filteredSim = simAnime
-        .filter(a => !excludeIds.has(a.mal_id) && (!minScore || !a.score || a.score >= minScore))
-        .sort((a,b) => (b.score||0) - (a.score||0));
-
-      // Genre picks — page 1 (these always have scores)
       const { genreAnime, hasMore } = await fetchGenrePage(1);
-      genreAnime.forEach(a => excludeIds.add(a.mal_id));
+      genreAnime.forEach(a => recState.excludeIds.add(a.mal_id));
       recState.genreDone = !hasMore;
       recState.genrePage = 2;
 
       status.innerHTML = ""; btn.disabled = false;
 
-      if (!filteredSim.length && !genreAnime.length) {
-        status.innerHTML=`<div class="err">No results found. Try removing filters or add anime to your list.</div>`;
+      if (!genreAnime.length) {
+        status.innerHTML = `<div class="err">No results found. Try different filters.</div>`;
         return;
       }
 
-      let html = "";
-      if (filteredSim.length) html += `
-        <div class="results-section">
-          <div class="results-heading"><span>Similar to your list — ${filteredSim.length} picks${minScore ? ` · score ≥ ${minScore}` : ""}</span></div>
-          <div class="results-grid">${filteredSim.map(posterCard).join("")}</div>
-        </div>`;
-
-      const cleanG = genreAnime.filter(a => !filteredSim.find(x => x.mal_id === a.mal_id));
       const genreLabel = [
-        genreIds ? `genres filtered` : `all genres`,
-        minScore ? `score ≥ ${minScore}` : "",
+        genreIds ? [...document.querySelectorAll("#genre-chips .chip.sel-g")].map(c=>c.textContent).join(", ") : "All Genres",
+        minScore ? `Score ≥ ${minScore}` : "",
         mediaType ? mediaType.toUpperCase() : ""
       ].filter(Boolean).join(" · ");
 
-      if (cleanG.length || (!filteredSim.length && genreAnime.length)) {
-        const showList = cleanG.length ? cleanG : genreAnime;
-        html += `
-        <div class="results-section" style="margin-top:${filteredSim.length?"2rem":"0"}">
-          <div class="results-heading"><span>Top picks — ${genreLabel}</span></div>
-          <div class="results-grid" id="genre-results-grid">${showList.map(posterCard).join("")}</div>
+      area.innerHTML = `
+        <div class="results-section">
+          <div class="results-heading"><span>${genreLabel}</span></div>
+          <div class="results-grid" id="genre-results-grid">${genreAnime.map(posterCard).join("")}</div>
           ${!recState.genreDone ? `<button class="load-more-btn" id="load-more-genre" onclick="loadMoreGenre()">Load more anime ↓</button>` : ""}
         </div>`;
-      }
 
-      area.innerHTML = html;
-
-      // Background score patch for similar entries missing scores
-      const noScore = filteredSim.filter(a => !a.score);
-      if (noScore.length) enrichScoresBackground(noScore);
     } catch {
-      status.innerHTML=`<div class="err">Something went wrong. Please try again.</div>`;
+      status.innerHTML = `<div class="err">Something went wrong. Please try again.</div>`;
       btn.disabled = false;
     }
   }
@@ -661,25 +623,6 @@
       else { btn.disabled=false; btn.textContent="Load more anime ↓"; }
     } catch {
       btn.disabled=false; btn.textContent="Load more anime ↓";
-    }
-  }
-
-  // Silently fetch real scores in background and patch DOM — never blocks the UI
-  async function enrichScoresBackground(list) {
-    for (let i = 0; i < list.length; i++) {
-      await delay(i % 3 === 0 && i > 0 ? 350 : 80);
-      try {
-        const r = await fetch(`${JIKAN}/anime/${list[i].mal_id}`);
-        const d = await r.json();
-        if (!d.data?.score) continue;
-        const score = parseFloat(d.data.score);
-        const color = score >= 8 ? "#27ae60" : score >= 7 ? "#e8a030" : "var(--red)";
-        const scoreEl = document.querySelector(`#poster-${list[i].mal_id} .poster-score`);
-        if (scoreEl) {
-          scoreEl.style.color = color;
-          scoreEl.innerHTML = `★ ${score.toFixed(2).replace(/\.?0+$/,"")}<span style="color:var(--dim)"> / 10</span>`;
-        }
-      } catch {}
     }
   }
 
