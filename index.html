@@ -730,7 +730,7 @@
   // ── RECOMMENDATIONS — purely tag/filter based ──
   const delay = ms => new Promise(r => setTimeout(r,ms));
 
-  let recAllData  = [];   // all loaded genre results
+  let recAllData  = [];
   let recSortRec  = "score";
 
   function resetTags() {
@@ -739,8 +739,12 @@
     document.querySelectorAll("#len-chips .chip").forEach(c   => c.classList.remove("sel-l"));
     document.getElementById("results-area").innerHTML = "";
     document.getElementById("rec-status").innerHTML  = "";
-    document.getElementById("rec-sort-bar").style.display = "none";
     recAllData = [];
+  }
+
+  function setRecSort(mode) {
+    recSortRec = mode;
+    renderRecGrid();
   }
 
   function sortRecAnime(data) {
@@ -752,12 +756,13 @@
       case "year_asc":   return arr.sort((a,b) => (a.aired?.prop?.from?.year||9999)-(b.aired?.prop?.from?.year||9999));
       case "popularity": return arr.sort((a,b) => (a.popularity||99999)-(b.popularity||99999));
       case "members":    return arr.sort((a,b) => (b.members||0)-(a.members||0));
-      default:           return arr.sort((a,b) => (b.score||0)-(a.score||0)); // score
+      default:           return arr.sort((a,b) => (b.score||0)-(a.score||0));
     }
   }
 
   function renderRecGrid() {
     const area = document.getElementById("results-area");
+    if (!recAllData.length) return;
     const sorted = sortRecAnime(recAllData);
     const genreLabel = recState.lastLabel || "Results";
     area.innerHTML = `
@@ -778,9 +783,8 @@
     const btn    = document.getElementById("rec-btn");
     const status = document.getElementById("rec-status");
     const area   = document.getElementById("results-area");
-    const sortBar= document.getElementById("rec-sort-bar");
 
-    btn.disabled = true; area.innerHTML = ""; sortBar.style.display = "none"; recAllData = [];
+    btn.disabled = true; area.innerHTML = ""; recAllData = [];
     status.innerHTML = `<div class="loading-state"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br>Fetching from MyAnimeList...</div>`;
 
     const genreLabel = [
@@ -804,28 +808,11 @@
         status.innerHTML = `<div class="err">No results found. Try different filters.</div>`;
         return;
       }
-
-      sortBar.style.display = "block";
       renderRecGrid();
-
     } catch {
       status.innerHTML = `<div class="err">Something went wrong. Please try again.</div>`;
       btn.disabled = false;
     }
-  }
-
-  async function fetchGenrePage(page) {
-    const { genreIds, minScore, mediaType } = recState;
-    let params = `order_by=score&sort=desc&limit=24&page=${page}&sfw=true`;
-    if (genreIds)  params += `&genres=${genreIds}`;
-    if (mediaType) params += `&type=${mediaType}`;
-    if (minScore)  params += `&min_score=${minScore}`;
-    const r = await fetch(`${JIKAN}/anime?${params}`);
-    const d = await r.json();
-    const all = d.data || [];
-    const { excludeIds } = recState;
-    const filtered = all.filter(a => !excludeIds.has(a.mal_id));
-    return { genreAnime: filtered, hasMore: d.pagination?.has_next_page };
   }
 
   async function loadMoreGenre() {
@@ -842,6 +829,19 @@
     } catch {
       if (btn) { btn.disabled=false; btn.textContent="Load more anime ↓"; }
     }
+  }
+
+  async function fetchGenrePage(page) {
+    const { genreIds, minScore, mediaType } = recState;
+    let params = `order_by=score&sort=desc&limit=24&page=${page}&sfw=true`;
+    if (genreIds)  params += `&genres=${genreIds}`;
+    if (mediaType) params += `&type=${mediaType}`;
+    if (minScore)  params += `&min_score=${minScore}`;
+    const r = await fetch(`${JIKAN}/anime?${params}`);
+    const d = await r.json();
+    const all = d.data || [];
+    const filtered = all.filter(a => !recState.excludeIds.has(a.mal_id));
+    return { genreAnime: filtered, hasMore: d.pagination?.has_next_page };
   }
 
   function posterCard(a) {
@@ -1081,6 +1081,21 @@
       let results = [...simMap.values()]
         .sort((a,b) => (b.votes - a.votes) || ((b.entry.score||0)-(a.entry.score||0)))
         .map(x=>x.entry);
+
+      // Enrich scores in background (recommendation entries have no score)
+      const toEnrich = results.filter(a => !a.score).slice(0, 30);
+      if (toEnrich.length) {
+        await Promise.allSettled(
+          toEnrich.map(async (a, i) => {
+            await new Promise(r => setTimeout(r, i * 120));
+            try {
+              const r = await fetch(`${JIKAN}/anime/${a.mal_id}`);
+              const d = await r.json();
+              if (d.data?.score) { a.score = d.data.score; a.images = d.data.images ?? a.images; }
+            } catch {}
+          })
+        );
+      }
 
       // If no loved anime or too few results, fall back to top MAL picks
       if (results.length < 8) {
