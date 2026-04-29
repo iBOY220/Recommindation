@@ -270,8 +270,8 @@
         <div style="display:flex;align-items:center;gap:.65rem">
           <span style="font-size:.72rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap">Sort by</span>
           <select class="sort-select" id="search-sort-select" onchange="setSort(this.value)">
+            <option value="score" selected>★ Rating</option>
             <option value="relevance">Relevance</option>
-            <option value="score">★ Rating</option>
             <option value="rank">🏆 Rank</option>
             <option value="title">A – Z</option>
             <option value="year_desc">Newest First</option>
@@ -394,6 +394,18 @@
         </div>
       </div>
 
+      <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem">
+        <span style="font-size:.72rem;color:var(--dim);white-space:nowrap">Sort results by</span>
+        <select class="sort-select" id="fy-sort-select" onchange="setFySort(this.value)">
+          <option value="votes">Best Match</option>
+          <option value="score">★ Rating</option>
+          <option value="rank">🏆 Rank</option>
+          <option value="title">A – Z</option>
+          <option value="year_desc">Newest First</option>
+          <option value="year_asc">Oldest First</option>
+          <option value="popularity">🔥 Popularity</option>
+        </select>
+      </div>
       <button class="rec-btn" id="fy-btn" onclick="getForYou()">✦ &nbsp;Get My Recommendations</button>
       <div id="fy-status"></div>
       <div id="fy-results"></div>
@@ -477,8 +489,8 @@
   let recSearchTimer = null;
   let lastRecQuery   = "";
   let lastRecPage    = 1;
-  let recSearchData  = [];   // all fetched results accumulated
-  let recSortMode    = "relevance";
+  let recSearchData  = [];
+  let recSortMode    = "score";   // default: highest rating first
   let recHasMore     = false;
 
   function debounceRecSearch(q) {
@@ -1133,20 +1145,104 @@
         return;
       }
 
+      // Store for re-sorting
+      fyResults = results.slice(0, 24);
+      fyResultsRaw = results.slice(0, 24).map(a => ({ ...a, _votes: simMap.get(a.mal_id)?.votes || 0 }));
       const moodLabel = moodChip ? moodChip.textContent : "All";
-      area.innerHTML = `
-        <div class="results-section" style="margin-top:1.5rem">
-          <div class="results-heading">
-            <span>Recommended for you — ${moodLabel}</span>
-            <button onclick="getForYou()" style="background:none;border:none;color:var(--purple);cursor:pointer;font-size:.78rem;font-family:'Inter',sans-serif">↺ Refresh</button>
-          </div>
-          <div class="results-grid">${results.slice(0,24).map(posterCard).join("")}</div>
-        </div>`;
+      renderFyGrid(moodLabel);
 
     } catch(e) {
       status.innerHTML = `<div class="err">Something went wrong. Please try again.</div>`;
       btn.disabled = false;
     }
+  }
+
+  let fyResultsRaw = [];
+  let fyResults    = [];
+  let fySortMode   = "votes";
+  let fyMoodLabel  = "All";
+
+  function setFySort(mode) {
+    fySortMode = mode;
+    renderFyGrid(fyMoodLabel);
+  }
+
+  function sortFyData(data) {
+    const arr = [...data];
+    switch (fySortMode) {
+      case "score":      return arr.sort((a,b) => (b.score||0)-(a.score||0));
+      case "rank":       return arr.sort((a,b) => (a.rank||99999)-(b.rank||99999));
+      case "title":      return arr.sort((a,b) => a.title.localeCompare(b.title));
+      case "year_desc":  return arr.sort((a,b) => (b.aired?.prop?.from?.year||0)-(a.aired?.prop?.from?.year||0));
+      case "year_asc":   return arr.sort((a,b) => (a.aired?.prop?.from?.year||9999)-(b.aired?.prop?.from?.year||9999));
+      case "popularity": return arr.sort((a,b) => (a.popularity||99999)-(b.popularity||99999));
+      default:           return arr.sort((a,b) => (b._votes||0)-(a._votes||0)); // best match
+    }
+  }
+
+  function renderFyGrid(moodLabel) {
+    fyMoodLabel = moodLabel || fyMoodLabel;
+    const area = document.getElementById("fy-results");
+    const sorted = sortFyData(fyResultsRaw);
+    area.innerHTML = `
+      <div class="results-section" style="margin-top:1.5rem">
+        <div class="results-heading">
+          <span>Recommended for you — ${fyMoodLabel}</span>
+          <button onclick="getForYou()" style="background:none;border:none;color:var(--purple);cursor:pointer;font-size:.78rem;font-family:'Inter',sans-serif">↺ Refresh</button>
+        </div>
+        <div class="results-grid">${sorted.map(fyPosterCard).join("")}</div>
+      </div>`;
+  }
+
+  function fyPosterCard(a) {
+    const id    = a.mal_id;
+    const title = esc(a.title);
+    const img   = a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || "";
+    const score = a.score ? parseFloat(a.score).toFixed(1) : "N/A";
+    const scoreColor = a.score ? (a.score>=8?"#27ae60":a.score>=7?"#e8a030":"var(--red)") : "var(--dimmer)";
+    const isLoved = !!loved.find(x=>x.id===id);
+    return `
+      <div class="anime-poster" id="fyp-${id}" onclick="fyPosterClick(${id},'${title}','${esc(img)}')" style="cursor:pointer">
+        <img src="${img}" alt="${title}" loading="lazy">
+        <div class="poster-overlay" onclick="event.stopPropagation()">
+          <div class="overlay-title">${a.title}</div>
+          <div class="overlay-actions">
+            <button class="overlay-btn ob-fav${isLoved?' added':''}" id="fylov-${id}"
+              onclick="toggleFyLoved(${id},'${title}','${esc(img)}')">
+              ${isLoved ? '❤️ In Loved' : '+ Add to Loved'}
+            </button>
+            <button class="overlay-btn ob-watch" onclick="openModal(${id})">🔍 Details</button>
+          </div>
+        </div>
+        <div class="poster-info">
+          <div class="poster-title">${a.title}</div>
+          <div class="poster-score" style="color:${scoreColor}">★ ${score}<span style="color:var(--dim)"> / 10</span></div>
+        </div>
+      </div>`;
+  }
+
+  function fyPosterClick(id, title, img) {
+    // Click on poster = add to loved and refresh recommendations
+    if (!loved.find(x=>x.id===id)) {
+      loved.push({ id, title, img });
+      saveAll(); renderLoved();
+      // Auto re-fetch recommendations with new loved anime
+      getForYou();
+    } else {
+      // Already loved — just open modal
+      openModal(id);
+    }
+  }
+
+  function toggleFyLoved(id, title, img) {
+    if (loved.find(x=>x.id===id)) {
+      loved = loved.filter(x=>x.id!==id);
+      const btn = document.getElementById(`fylov-${id}`);
+      if (btn) { btn.classList.remove("added"); btn.textContent = "+ Add to Loved"; }
+    } else {
+      loved.push({ id, title, img });
+    }
+    saveAll(); renderLoved();
   }
 
   // Init loved list on load
