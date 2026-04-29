@@ -354,11 +354,14 @@
   }
 
   let recSearchTimer = null;
+  let lastRecQuery = "";
+  let lastRecPage  = 1;
+
   function debounceRecSearch(q) {
     clearTimeout(recSearchTimer);
     const el = document.getElementById("rec-results");
-    if (!q || q.length < 2) { el.style.display="none"; return; }
-    recSearchTimer = setTimeout(() => searchRec(q, 1, false), 420);
+    if (!q || q.length < 2) { el.style.display="none"; el.innerHTML=""; return; }
+    recSearchTimer = setTimeout(() => { lastRecQuery=q; lastRecPage=1; searchRec(q,1,false); }, 420);
   }
 
   async function searchRec(q, page, append) {
@@ -368,8 +371,11 @@
     try {
       const r = await fetch(`${JIKAN}/anime?q=${encodeURIComponent(q)}&limit=10&page=${page}&sfw=true`);
       const d = await r.json();
-      if (!d.data?.length && !append) { el.innerHTML=`<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">No results found.</div>`; return; }
-      const rows = d.data.map(a => `
+      if (!d.data?.length && !append) {
+        el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">No results found.</div>`;
+        return;
+      }
+      const rows = (d.data||[]).map(a => `
         <div class="search-item">
           <img src="${a.images?.jpg?.image_url||''}" alt="" onerror="this.style.opacity=0" onclick="hideRecSearch();openModal(${a.mal_id})" style="cursor:pointer">
           <div style="min-width:0;flex:1;cursor:pointer" onclick="hideRecSearch();openModal(${a.mal_id})">
@@ -383,10 +389,20 @@
           </div>
         </div>`).join("");
       const hasMore = d.pagination?.has_next_page;
-      const moreBtn = hasMore ? `<div class="search-more" onclick="searchRec('${esc(q)}',${page+1},true)">Load more results ↓</div>` : "";
-      if (append) { const old=el.querySelector(".search-more"); if(old)old.remove(); el.insertAdjacentHTML("beforeend",rows+moreBtn); }
-      else el.innerHTML = rows + moreBtn;
-    } catch { if (!append) el.innerHTML=`<div style="padding:.75rem 1rem;color:var(--red);font-size:.82rem">Search failed.</div>`; }
+      const nextPage = page + 1;
+      const moreBtn = hasMore
+        ? `<div class="search-more" onclick="searchRec(lastRecQuery,${nextPage},true)">Load more results ↓</div>`
+        : "";
+      if (append) {
+        const old = el.querySelector(".search-more");
+        if (old) old.remove();
+        el.insertAdjacentHTML("beforeend", rows + moreBtn);
+      } else {
+        el.innerHTML = rows + moreBtn;
+      }
+    } catch(e) {
+      if (!append) el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--red);font-size:.82rem">Search failed: ${e.message}</div>`;
+    }
   }
 
   function hideRecSearch() {
@@ -394,6 +410,7 @@
     if (el) { el.style.display="none"; el.innerHTML=""; }
     const inp = document.getElementById("rec-search");
     if (inp) inp.value = "";
+    lastRecQuery = ""; lastRecPage = 1;
   }
 
   async function searchMAL(q, page, append) {
@@ -564,7 +581,7 @@
       }
 
       const filteredSim = simAnime
-        .filter(a => !excludeIds.has(a.mal_id))
+        .filter(a => !excludeIds.has(a.mal_id) && (!minScore || !a.score || a.score >= minScore))
         .sort((a,b) => (b.score||0) - (a.score||0));
 
       // Genre picks — page 1 (these always have scores)
@@ -583,22 +600,30 @@
       let html = "";
       if (filteredSim.length) html += `
         <div class="results-section">
-          <div class="results-heading"><span>Similar to your list — ${filteredSim.length} picks</span></div>
+          <div class="results-heading"><span>Similar to your list — ${filteredSim.length} picks${minScore ? ` · score ≥ ${minScore}` : ""}</span></div>
           <div class="results-grid">${filteredSim.map(posterCard).join("")}</div>
         </div>`;
 
-      const cleanG = genreAnime.filter(a => !filteredSim.find(x => x.mal_id===a.mal_id));
-      if (cleanG.length) html += `
-        <div class="results-section" style="margin-top:2rem">
-          <div class="results-heading"><span>Top picks by your filters</span></div>
-          <div class="results-grid" id="genre-results-grid">${cleanG.map(posterCard).join("")}</div>
+      const cleanG = genreAnime.filter(a => !filteredSim.find(x => x.mal_id === a.mal_id));
+      const genreLabel = [
+        genreIds ? `genres filtered` : `all genres`,
+        minScore ? `score ≥ ${minScore}` : "",
+        mediaType ? mediaType.toUpperCase() : ""
+      ].filter(Boolean).join(" · ");
+
+      if (cleanG.length || (!filteredSim.length && genreAnime.length)) {
+        const showList = cleanG.length ? cleanG : genreAnime;
+        html += `
+        <div class="results-section" style="margin-top:${filteredSim.length?"2rem":"0"}">
+          <div class="results-heading"><span>Top picks — ${genreLabel}</span></div>
+          <div class="results-grid" id="genre-results-grid">${showList.map(posterCard).join("")}</div>
           ${!recState.genreDone ? `<button class="load-more-btn" id="load-more-genre" onclick="loadMoreGenre()">Load more anime ↓</button>` : ""}
         </div>`;
+      }
 
       area.innerHTML = html;
 
-      // ── Background score patch: silently fetch real scores for "similar" entries
-      // that have no score, and update the DOM without blocking the UI
+      // Background score patch for similar entries missing scores
       const noScore = filteredSim.filter(a => !a.score);
       if (noScore.length) enrichScoresBackground(noScore);
     } catch {
