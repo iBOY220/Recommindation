@@ -1,244 +1,3 @@
-
-Recommendation
-/
-Claude finished the response
-You said: An you do something like “Smart Anime Recommendation Engine”
-An you do something like “Smart Anime Recommendation Engine”
-If yes tell me what you need or the steps
-
-6:50 PM
-Claude responded: Yes, absolutely!
-
-Check frontend design skill
-Check frontend design skill
-Yes, absolutely! Here's how it works and what I need from you:
-
-What I'll build: A React artifact powered by the Anthropic API (Claude AI inside the app) that takes your preferences and recommends anime with smart reasoning — not just a simple list.
-
-Features I can include:
-
-Mood/genre selector (action, romance, isekai, psychological, etc.)
-Preference inputs (favorite anime, what you're in the mood for)
-AI-generated recommendations with explanations why each fits you
-Ratings, episode counts, where to watch
-"Surprise me" button for random picks
-What I need from you — just pick your preferences:
-
-What style do you want? Dark/cinematic, bright/playful, or minimal/clean?
-Any must-have features? (e.g., filter by length, genre tags, mood slider, streaming platform filter)
-Anything you definitely don't want?
-Or if you just want me to go ahead and build it with my own creative choices, just say "just build it" and I'll surprise you with a polished version right away! 🎌
-
-You said: ask questions
-ask questions
-
-6:52 PM
-Claude responded: What are your preferences?
-What are your preferences? Your answers will help me tailor the recommendation engine perfectly for you! 🎌
-
-You said: Q: What's your experience with anime?
-Q: What's your experience with anime?
-A: anything
-
-Q: What vibe are you usually in the mood for? (Select all that apply)
-A: [No preference]
-
-Q: What visual style should the app have?
-A: Dark & cinematic
-
-6:52 PM
-Claude responded: Perfect!
-Perfect! I'll build you a dark & cinematic anime recommendation engine that works for any experience level and any genre. Building it now! 🎬
-
-
-
-Here's your Anime Oracle — dark, cinematic, and fully AI-powered. Here's how to use it:
-
-Pick your genres (multi-select — choose as many as you want)
-Select your current mood (one pick)
-Choose episode length preference
-Optionally drop in anime you've loved for more personalized picks
-Hit Find My Anime — Claude AI inside the app generates 5 tailored recommendations with reasons why each fits you
-Every time you adjust your selections and hit the button again, you get fresh recommendations. Enjoy! 🎌
-
-You said: lets make it more simple for the user, for example:
-lets make it more simple for the user, for example:
-option 1:  let me have my anime that i have watched and loved so you can keep it in you mined, option2: ask questions that i can answer then you can give me the recommended animes with there poster, after clicking the poster.
-
-and it will be even better to make this from myanimelist API so you can give me details about the anime and some anime that are similar to, and there ratings
-
-7:00 PM
-Claude responded: Great vision!
-Great vision! Let me be upfront about one thing before building:
-
-MyAnimeList API requires an API key/client ID that needs to be registered on their developer portal — I can't embed that directly. But I have two solid alternatives:
-
-Option A — Jikan API (unofficial MAL wrapper, completely free, no key needed) — gives real MAL data: ratings, posters, synopsis, episode count, genres, and even similar/related anime. This is what I'd use.
-
-Option B — Keep it Claude AI only — no real posters but smarter personalized reasoning.
-
-I'd go with Jikan API — it pulls directly from MyAnimeList data, so ratings and info are accurate and current.
-
-Now let me ask a couple quick things before I build:
-
-Your choices will shape the whole experience — what do you prefer?
-
-You said: Q: For the 'anime I've watched' list — how should it work?
-Q: For the 'anime I've watched' list — how should it work?
-A: Search and add from MAL database
-
-Q: After clicking an anime poster, what should appear?
-A: Full details + similar anime
-
-7:01 PM
-Claude responded: Perfect choices!
-Perfect choices! Building it now — this will be a full MAL-powered app with real posters, ratings, and similar anime recommendations.
-
-
-
-Here's the full upgraded experience! Here's what's inside:
-
-Tab 1 — My Watched List
-
-Search any anime from the real MAL database
-Click to add it — posters appear in your personal grid
-Hover a card to remove it
-Click any poster to open full details
-Tab 2 — Get Recommendations
-
-Pick genres, mood, and length
-Claude AI generates 8 tailored picks, then fetches real MAL data for each (poster, score, episodes)
-Click any poster to open the detail modal
-Detail Modal (on any poster click)
-
-Full info: score, episodes, status, year, genres, Japanese title, synopsis
-Similar anime section pulled directly from MAL — click any to open its details too
-You said: i want to post it in GitHub so i can make it as my page to search, so make it as .
-i want to post it in GitHub so i can make it as my page to search, so make it as .html
-
-7:06 PM
-Claude responded: One important note before I build: the app uses the Anthropic API for AI recommendations, which requires an API key.
-
-Check skills available
-Check skills available
-One important note before I build: the app uses the Anthropic API for AI recommendations, which requires an API key. Since this will be a public GitHub page, I'll add a simple API key input field in the app so you (or anyone using it) can enter their own key — it stays local in the browser, never sent anywhere else.
-
-The Jikan/MAL data is completely free with no key needed.
-
-
-Creating the full standalone HTML file for GitHub Pages
-Creating the full standalone HTML file for GitHub Pages
-Claude's response was interrupted
-You said: i want to post it in GitHub so i can make it as my page to search, so make it as .
-i want to post it in GitHub so i can make it as my page to search, so make it as .html about the API, write my API Key in the script so it can exist there, the website for me only just tell me how to get the API
-
-7:08 PM
-Claude responded: Your file is ready!
-
-Created a file, ran a command, read a file
-Created a file, ran a command, read a file
-Your file is ready! Here's everything you need:
-
-How to get your Anthropic API Key:
-
-Go to console.anthropic.com
-Sign up or log in
-Click "API Keys" in the left sidebar
-Click "Create Key" → copy it
-Open anime-oracle.html in any text editor, find this line near the top of the script:
-   const ANTHROPIC_API_KEY = "YOUR_API_KEY_HERE";
-Replace YOUR_API_KEY_HERE with your actual key.
-
-How to publish on GitHub Pages:
-
-Create a new GitHub repo (e.g. anime-oracle)
-Upload anime-oracle.html and rename it to index.html
-Go to Settings → Pages → Source → main branch
-Your site will be live at https://yourusername.github.io/anime-oracle
-⚠️ Important: Since it's your personal site, the API key in the file is fine — but keep the repo private so others can't see or use your key.
-
-
-Anime oracle
-Code · HTML 
-You said: i dont want anthropic API Key, i want MAL API
-i dont want anthropic API Key, i want MAL API
-
-7:14 PM
-Claude responded: The challenge with MAL's official API is that it requires a backend server to hide the client secret — you can't safely call it directly from a browser/GitHub …
-The challenge with MAL's official API is that it requires a backend server to hide the client secret — you can't safely call it directly from a browser/GitHub Pages without exposing credentials.
-
-The good news: The app already uses Jikan API which is 100% unofficial MAL data — same database, same ratings, same posters, zero API key needed. The only part that used Anthropic was generating the recommendation titles.
-
-I can replace the Anthropic part with pure Jikan logic:
-
-You said: Q: Without AI, how should recommendations be generated?
-Q: Without AI, how should recommendations be generated?
-A: Both: filter by genre AND pull similar from watched list
-
-7:14 PM
-Claude responded: Perfect.
-Perfect. Building it now — fully MAL-powered via Jikan, no API key needed, works on GitHub Pages out of the box.
-
-
-Created 2 files, ran 2 commands, read a file
-Created 2 files, ran 2 commands, read a file
-Done! Zero API keys. Zero login. Works out of the box.
-
-Here's what's inside the file:
-
-Tab 1 — My Watched List: Search real MAL titles, click to add them as poster cards. Hover to remove. Click any card to open full details.
-
-Tab 2 — Get Recommendations: Pick genres, rating filter, and format — then hit Find. Results come in two sections: "Similar to your watched list" (pulled from MAL's own recommendations for each anime you added) and "Top picks by your filters" (sorted by score from MAL's database).
-
-Clicking any poster opens a full modal: score, episodes, status, year, ranking, studio, genres, synopsis, and similar anime from MAL — click any similar anime to open its details too.
-
-To put it on GitHub Pages:
-
-Create a new GitHub repo
-Upload the file and rename it index.html
-Go to Settings → Pages → Branch: main → Save
-Live at https://yourusername.github.io/repo-name
-
-Anime oracle
-Code · HTML 
-You said: in recommendation there is error,
-1777480095636_image.png
-in recommendation there is error,
-
-add favorite animes that i have watched and loved before, and let the website save my change event if i close the website s the favorite anime still there, and change the name from Anime Oracle to 0xA7, and remove this "Data from MyAnimeList · Powered by Jikan API · No login required"
-
-7:30 PM
-Claude responded: The error is because the old file still had the Anthropic API call leftover.
-The error is because the old file still had the Anthropic API call leftover. The new version is pure Jikan — I'll fix that, add localStorage so your watched list saves permanently, and update the branding.
-
-
-Created a file, ran a command, read a file
-Created a file, ran a command, read a file
-All done! Here's everything that changed:
-
-Fixed:
-
-Removed all Anthropic API calls — recommendations now run 100% on Jikan/MAL, zero errors
-New features:
-
-⭐ Favorites section — click any anime poster in the modal and hit "Add to Favorites". Favorites appear at the top of your list with a star
-localStorage — your watched list and favorites are saved in the browser permanently. Close the tab, restart your PC — they're still there
-Rebranded to 0xA7, subtitle removed
-"Clear all" buttons for both watched and favorites sections
-To deploy on GitHub Pages — rename the file to index.html before uploading, same steps as before.
-
-
-0xa7
-Code · HTML 
-
-
-
-
-
-Claude is AI and can make mistakes. Please double-check responses.
-0xa7 · HTML
-Copy
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -259,13 +18,13 @@ Copy
     .accent-line { height: 2px; background: linear-gradient(90deg,#c0392b,#8e44ad,#2980b9,#c0392b); background-size:200%; animation: shimmer 5s linear infinite; }
     @keyframes shimmer { to { background-position: 200%; } }
     .container { max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
- 
+
     /* HEADER */
     .header { text-align: center; margin-bottom: 2.5rem; }
     .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.8rem,7vw,4.5rem); letter-spacing:.1em; color:#fff; line-height:1; text-shadow:0 0 60px rgba(142,68,173,.4); }
     .logo span { color: var(--red); }
     .tagline { font-size:.75rem; color:var(--dim); letter-spacing:.18em; text-transform:uppercase; margin-top:.4rem; }
- 
+
     /* TABS */
     .tabs { display:flex; background:var(--surface); border-radius:10px; padding:4px; margin-bottom:1.5rem; border:.5px solid var(--border); }
     .tab { flex:1; padding:.65rem; text-align:center; cursor:pointer; border-radius:7px; font-size:.85rem; font-weight:500; color:var(--dim); transition:all .2s; user-select:none; }
@@ -273,7 +32,7 @@ Copy
     .panel { display:none; }
     .panel.active { display:block; animation: fadeUp .3s ease; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
- 
+
     /* SEARCH */
     .search-wrap { position:relative; margin-bottom:.75rem; }
     .search-icon { position:absolute; left:.85rem; top:50%; transform:translateY(-50%); color:var(--dim); pointer-events:none; font-style:normal; }
@@ -288,7 +47,7 @@ Copy
     .si-title { font-size:.88rem; font-weight:500; color:var(--text); }
     .si-meta { font-size:.73rem; color:var(--dim); margin-top:2px; }
     .si-score { margin-left:auto; font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--red); flex-shrink:0; }
- 
+
     /* WATCHED GRID */
     .watched-hint { font-size:.75rem; color:var(--dimmer); text-align:center; margin-bottom:.85rem; }
     .watched-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(105px,1fr)); gap:.85rem; }
@@ -300,7 +59,7 @@ Copy
     .watched-card:hover .wc-remove { opacity:1; }
     .empty-state { grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--dimmer); font-size:.85rem; font-style:italic; line-height:1.9; }
     .saved-notice { font-size:.72rem; color:#3a6e3a; text-align:center; margin-bottom:.65rem; letter-spacing:.05em; }
- 
+
     /* CHIPS */
     .q-section { margin-bottom:1.25rem; }
     .q-label { font-size:.73rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); margin-bottom:.65rem; font-weight:500; }
@@ -310,11 +69,11 @@ Copy
     .chip.sel-g { background:#1e0e2e; border-color:var(--purple); color:#d4a8f0; }
     .chip.sel-m { background:#0e1e2e; border-color:var(--blue); color:#90c0e8; }
     .chip.sel-l { background:#1e0a0a; border-color:var(--red); color:#e89080; }
- 
+
     .rec-btn { width:100%; padding:.9rem; background:#1a0a20; border:1px solid var(--purple); border-radius:9px; color:#d4a8f0; font-family:'Bebas Neue',sans-serif; font-size:1.15rem; letter-spacing:.2em; cursor:pointer; transition:all .2s; margin-top:.5rem; }
     .rec-btn:hover:not(:disabled) { background:#2a0a35; box-shadow:0 0 24px rgba(142,68,173,.25); }
     .rec-btn:disabled { opacity:.4; cursor:not-allowed; }
- 
+
     /* RESULTS */
     .results-section { margin-top:1.75rem; }
     .results-heading { font-family:'Bebas Neue',sans-serif; font-size:.85rem; letter-spacing:.18em; color:var(--dim); margin-bottom:.85rem; padding-bottom:.5rem; border-bottom:.5px solid var(--border2); }
@@ -326,14 +85,14 @@ Copy
     .poster-title { font-size:.77rem; font-weight:500; color:var(--text); line-height:1.35; margin-bottom:3px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
     .poster-score { font-family:'Bebas Neue',sans-serif; font-size:1rem; color:var(--red); }
     .poster-score span { font-family:'Inter',sans-serif; font-size:.65rem; color:var(--dim); margin-left:2px; }
- 
+
     .loading-state { text-align:center; padding:2.5rem; color:var(--dim); font-style:italic; font-size:.85rem; line-height:2.2; }
     .dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:var(--purple); margin:0 3px; animation:blink 1s infinite; }
     .dot:nth-child(2) { animation-delay:.2s; background:var(--red); }
     .dot:nth-child(3) { animation-delay:.4s; background:var(--blue); }
     @keyframes blink { 0%,100%{opacity:.2;transform:scale(.8)} 50%{opacity:1;transform:scale(1.2)} }
     .err { color:var(--red); text-align:center; padding:1rem; font-size:.85rem; font-style:italic; }
- 
+
     /* MODAL */
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:1000; display:flex; align-items:flex-start; justify-content:center; overflow-y:auto; padding:2rem 1rem; opacity:0; pointer-events:none; transition:opacity .25s; }
     .overlay.open { opacity:1; pointer-events:all; }
@@ -368,12 +127,12 @@ Copy
     .modal-fav-btn.is-fav { background:#1e180a; border-color:#c8901a; color:#e8a030; }
     .modal-close { flex:1; padding:.65rem; background:transparent; border:.5px solid var(--border); border-radius:8px; color:var(--dim); cursor:pointer; font-size:.82rem; transition:all .2s; font-family:'Inter',sans-serif; }
     .modal-close:hover { border-color:var(--purple); color:#c090e0; }
- 
+
     /* FAVORITES section in watched tab */
     .section-divider { font-family:'Bebas Neue',sans-serif; font-size:.8rem; letter-spacing:.18em; color:var(--dim); margin:1.5rem 0 .75rem; padding-bottom:.5rem; border-bottom:.5px solid var(--border2); display:flex; align-items:center; justify-content:space-between; }
     .clear-btn { font-family:'Inter',sans-serif; font-size:.7rem; color:var(--dimmer); cursor:pointer; background:none; border:none; letter-spacing:0; transition:color .2s; }
     .clear-btn:hover { color:var(--red); }
- 
+
     @media(max-width:520px) {
       .modal-hero { flex-direction:column; }
       .modal-poster { width:100px; }
@@ -389,12 +148,12 @@ Copy
     <div class="logo">0x<span>A7</span></div>
     <div class="tagline">Your personal anime finder</div>
   </div>
- 
+
   <div class="tabs">
     <div class="tab active" onclick="switchTab('watched')">⊞ &nbsp;My Anime List</div>
     <div class="tab" onclick="switchTab('rec')">✦ &nbsp;Get Recommendations</div>
   </div>
- 
+
   <!-- WATCHED PANEL -->
   <div class="panel active" id="panel-watched">
     <div class="search-wrap">
@@ -402,7 +161,7 @@ Copy
       <input class="search-input" id="watch-search" placeholder="Search and add anime you've watched..." oninput="debounce(this.value)" autocomplete="off">
     </div>
     <div class="search-results" id="watch-results"></div>
- 
+
     <!-- Favorites -->
     <div id="fav-section" style="display:none">
       <div class="section-divider">
@@ -412,7 +171,7 @@ Copy
       <div class="watched-hint">Your favorites are saved — they stay even if you close the browser.</div>
       <div class="watched-grid" id="fav-grid"></div>
     </div>
- 
+
     <!-- Watched -->
     <div id="watched-section">
       <div class="section-divider" id="watched-divider" style="display:none">
@@ -425,7 +184,7 @@ Copy
       </div>
     </div>
   </div>
- 
+
   <!-- RECOMMENDATIONS PANEL -->
   <div class="panel" id="panel-rec">
     <div class="q-section">
@@ -470,7 +229,7 @@ Copy
     <div id="results-area"></div>
   </div>
 </div>
- 
+
 <!-- MODAL -->
 <div class="overlay" id="overlay" onclick="closeModalOutside(event)">
   <div class="modal" id="modal">
@@ -481,26 +240,26 @@ Copy
     </div>
   </div>
 </div>
- 
+
 <script>
   const JIKAN = "https://api.jikan.moe/v4";
   const LS_WATCHED  = "0xa7_watched";
   const LS_FAVS     = "0xa7_favorites";
- 
+
   let watched   = JSON.parse(localStorage.getItem(LS_WATCHED)  || "[]");
   let favorites = JSON.parse(localStorage.getItem(LS_FAVS)     || "[]");
   let currentModalId = null;
   let searchTimer = null;
- 
+
   function save() {
     localStorage.setItem(LS_WATCHED, JSON.stringify(watched));
     localStorage.setItem(LS_FAVS,    JSON.stringify(favorites));
   }
- 
+
   // ── INIT ──
   renderWatched();
   renderFavs();
- 
+
   // ── TABS ──
   function switchTab(name) {
     document.querySelectorAll(".tab").forEach((t,i) =>
@@ -509,7 +268,7 @@ Copy
     document.getElementById("panel-watched").classList.toggle("active", name==="watched");
     document.getElementById("panel-rec").classList.toggle("active", name==="rec");
   }
- 
+
   // ── CHIPS ──
   document.querySelectorAll("#genre-chips .chip").forEach(c =>
     c.addEventListener("click", () => c.classList.toggle("sel-g"))
@@ -526,13 +285,13 @@ Copy
       c.classList.add("sel-l");
     })
   );
- 
+
   // ── SEARCH ──
   function debounce(q) {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => searchMAL(q), 420);
   }
- 
+
   async function searchMAL(q) {
     const el = document.getElementById("watch-results");
     if (!q || q.length < 2) { el.style.display="none"; return; }
@@ -553,31 +312,31 @@ Copy
         </div>`).join("");
     } catch { el.innerHTML=`<div style="padding:.75rem 1rem;color:var(--red);font-size:.82rem">Search failed. Try again.</div>`; }
   }
- 
+
   function esc(s) { return (s||"").replace(/'/g,"\\'").replace(/"/g,"&quot;"); }
- 
+
   function addWatched(id, title, img) {
     if (watched.find(w=>w.id===id) || favorites.find(f=>f.id===id)) { hideSearch(); return; }
     watched.push({ id, title, img });
     save(); renderWatched(); hideSearch();
     document.getElementById("watch-search").value = "";
   }
- 
+
   function hideSearch() {
     const el = document.getElementById("watch-results");
     el.style.display="none"; el.innerHTML="";
   }
- 
+
   function removeWatched(id) {
     watched = watched.filter(w=>w.id!==id);
     save(); renderWatched();
   }
- 
+
   function renderWatched() {
     const g = document.getElementById("watched-grid");
     const divider = document.getElementById("watched-divider");
     const hint = document.getElementById("watched-main-hint");
- 
+
     if (!watched.length) {
       divider.style.display = "none";
       hint.style.display = "block";
@@ -595,12 +354,12 @@ Copy
         <div class="wc-title">${w.title}</div>
       </div>`).join("");
   }
- 
+
   function clearWatched() {
     if (!confirm("Clear your entire watched list?")) return;
     watched = []; save(); renderWatched();
   }
- 
+
   // ── FAVORITES ──
   function renderFavs() {
     const sec = document.getElementById("fav-section");
@@ -614,19 +373,19 @@ Copy
         <div class="wc-title">⭐ ${f.title}</div>
       </div>`).join("");
   }
- 
+
   function removeFav(id) {
     favorites = favorites.filter(f=>f.id!==id);
     save(); renderFavs();
   }
- 
+
   function clearFavorites() {
     if (!confirm("Clear all favorites?")) return;
     favorites = []; save(); renderFavs();
   }
- 
+
   function isFav(id) { return !!favorites.find(f=>f.id===id); }
- 
+
   function toggleFavFromModal() {
     if (!currentModalId) return;
     const id = currentModalId;
@@ -648,7 +407,7 @@ Copy
     }
     save(); renderFavs(); updateFavBtn(id);
   }
- 
+
   function updateFavBtn(id) {
     const btn = document.getElementById("modal-fav-btn");
     if (!btn) return;
@@ -660,28 +419,28 @@ Copy
       btn.classList.remove("is-fav");
     }
   }
- 
+
   // ── RECOMMENDATIONS (pure Jikan, no AI) ──
   const delay = ms => new Promise(r => setTimeout(r, ms));
- 
+
   async function getRecommendations() {
     const genreIds  = [...document.querySelectorAll("#genre-chips .chip.sel-g")].map(c=>c.dataset.id).join(",");
     const moodChip  = document.querySelector("#mood-chips .chip.sel-m");
     const lenChip   = document.querySelector("#len-chips .chip.sel-l");
     const minScore  = moodChip ? parseFloat(moodChip.dataset.min) : 0;
     const mediaType = lenChip  ? lenChip.dataset.type : "";
- 
+
     const btn    = document.getElementById("rec-btn");
     const status = document.getElementById("rec-status");
     const area   = document.getElementById("results-area");
- 
+
     btn.disabled = true; area.innerHTML = "";
     status.innerHTML = `<div class="loading-state"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br>Fetching from MyAnimeList...</div>`;
- 
+
     try {
       // All sources to pull from (watched + favorites)
       const allSources = [...new Map([...watched,...favorites].map(x=>[x.id,x])).values()];
- 
+
       // 1. Pull similar from watched + favorites
       const simIds   = new Set();
       const simAnime = [];
@@ -700,7 +459,7 @@ Copy
           });
         });
       }
- 
+
       // 2. Pull by genre / filter
       await delay(300);
       let params = `order_by=score&sort=desc&limit=20&sfw=true`;
@@ -710,7 +469,7 @@ Copy
       const gr = await fetch(`${JIKAN}/anime?${params}`);
       const gd = await gr.json();
       const genreAnime = gd.data || [];
- 
+
       // 3. Deduplicate — exclude things already watched/favorited
       const excludeIds = new Set(allSources.map(w=>w.id));
       const seen = new Set();
@@ -718,20 +477,20 @@ Copy
         if (seen.has(a.mal_id) || excludeIds.has(a.mal_id)) return false;
         seen.add(a.mal_id); return true;
       });
- 
+
       const filteredSim   = dedupe(simAnime)
         .filter(a => !minScore || (a.score && a.score >= minScore))
         .sort((a,b) => (b.score||0) - (a.score||0))
         .slice(0, 16);
       const filteredGenre = dedupe(genreAnime);
- 
+
       status.innerHTML = ""; btn.disabled = false;
- 
+
       if (!filteredSim.length && !filteredGenre.length) {
         status.innerHTML = `<div class="err">No results found. Try removing filters or add anime to your list.</div>`;
         return;
       }
- 
+
       let html = "";
       if (filteredSim.length) html += `
         <div class="results-section">
@@ -743,14 +502,14 @@ Copy
           <div class="results-heading">Top picks by your filters — ${filteredGenre.length} picks</div>
           <div class="results-grid">${filteredGenre.map(posterCard).join("")}</div>
         </div>`;
- 
+
       area.innerHTML = html;
     } catch(e) {
       status.innerHTML = `<div class="err">Something went wrong. Please try again.</div>`;
       btn.disabled = false;
     }
   }
- 
+
   function posterCard(a) {
     return `
       <div class="anime-poster" onclick="openModal(${a.mal_id})">
@@ -761,7 +520,7 @@ Copy
         </div>
       </div>`;
   }
- 
+
   // ── MODAL ──
   async function openModal(malId) {
     currentModalId = malId;
@@ -780,7 +539,7 @@ Copy
       const similar = ((await rr.json()).data||[]).slice(0,8);
       currentModalId = malId;
       updateFavBtn(malId);
- 
+
       const studios  = (a.studios||[]).map(s=>s.name).join(", ")||"—";
       const genres   = (a.genres||[]).map(g=>`<span class="gtag">${g.name}</span>`).join("");
       const simCards = similar.map(s=>`
@@ -788,7 +547,7 @@ Copy
           <img src="${s.entry.images?.jpg?.image_url||''}" alt="${esc(s.entry.title)}" loading="lazy">
           <div class="sim-title">${s.entry.title}</div>
         </div>`).join("");
- 
+
       content.innerHTML = `
         <div class="modal-hero">
           <img class="modal-poster" src="${a.images?.jpg?.large_image_url||''}" alt="${a.title}" onerror="this.style.display='none'">
@@ -817,7 +576,7 @@ Copy
       content.innerHTML=`<div class="err" style="padding:2rem">Failed to load details. Try again.</div>`;
     }
   }
- 
+
   function closeModal() {
     document.getElementById("overlay").classList.remove("open");
     document.body.style.overflow = "";
@@ -828,4 +587,3 @@ Copy
 </script>
 </body>
 </html>
- 
