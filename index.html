@@ -1222,14 +1222,21 @@
   }
 
   function fyPosterClick(id, title, img) {
-    // Click on poster = add to loved and refresh recommendations
     if (!loved.find(x=>x.id===id)) {
       loved.push({ id, title, img });
       saveAll(); renderLoved();
-      // Auto re-fetch recommendations with new loved anime
-      getForYou();
+      // Show a brief confirmation on the card
+      const card = document.getElementById(`fyp-${id}`);
+      if (card) {
+        const badge = document.createElement("div");
+        badge.style.cssText = "position:absolute;inset:0;background:rgba(231,76,60,.18);display:flex;align-items:center;justify-content:center;font-size:1.5rem;border-radius:8px;pointer-events:none;animation:fadeUp .3s ease";
+        badge.textContent = "❤️";
+        card.appendChild(badge);
+        setTimeout(() => badge.remove(), 1000);
+      }
+      const btn = document.getElementById(`fylov-${id}`);
+      if (btn) { btn.classList.add("added"); btn.textContent = "❤️ In Loved"; }
     } else {
-      // Already loved — just open modal
       openModal(id);
     }
   }
