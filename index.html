@@ -146,6 +146,17 @@
     @keyframes blink { 0%,100%{opacity:.2;transform:scale(.8)} 50%{opacity:1;transform:scale(1.2)} }
     .err { color:var(--red); text-align:center; padding:1rem; font-size:.85rem; font-style:italic; }
 
+    /* SEARCH SORT FILTER BAR */
+    .filter-btn { padding:4px 12px; border-radius:16px; border:.5px solid var(--border); background:var(--surface); color:var(--dim); cursor:pointer; font-size:.75rem; font-family:'Inter',sans-serif; transition:all .18s; white-space:nowrap; }
+    .filter-btn:hover { border-color:var(--purple); color:#c090e0; }
+    .filter-btn.active { background:#1e0e2e; border-color:var(--purple); color:#d4a8f0; }
+
+    /* REC SEARCH RESULTS — poster grid style */
+    .rec-results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:.85rem; margin-top:.5rem; }
+    .rec-load-more { display:block; width:100%; margin-top:1rem; padding:.65rem; background:transparent; border:.5px solid var(--border); border-radius:9px; color:var(--dim); cursor:pointer; font-size:.82rem; transition:all .2s; font-family:'Inter',sans-serif; }
+    .rec-load-more:hover { border-color:var(--purple); color:#c090e0; }
+    .rec-load-more:disabled { opacity:.4; cursor:not-allowed; }
+
     /* MODAL */
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:1000; display:flex; align-items:flex-start; justify-content:center; overflow-y:auto; padding:2rem 1rem; opacity:0; pointer-events:none; transition:opacity .25s; }
     .overlay.open { opacity:1; pointer-events:all; }
@@ -236,11 +247,25 @@
   <div class="panel" id="panel-rec">
     <div class="q-section">
       <div class="q-label">Search a specific anime</div>
-      <div class="search-wrap" style="margin-bottom:0">
+      <div class="search-wrap" style="margin-bottom:.65rem">
         <span class="search-icon">🔍</span>
         <input class="search-input" id="rec-search" placeholder="Search by title on MyAnimeList..." oninput="debounceRecSearch(this.value)" autocomplete="off">
       </div>
-      <div class="search-results" id="rec-results" style="margin-top:.5rem;margin-bottom:0"></div>
+      <!-- Sort & filter bar — shown only when search has results -->
+      <div id="rec-filter-bar" style="display:none;margin-bottom:.75rem">
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center">
+          <span style="font-size:.72rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-right:.25rem">Sort</span>
+          <button class="filter-btn active" data-sort="relevance"   onclick="setSort(this,'relevance')">Relevance</button>
+          <button class="filter-btn"        data-sort="score"       onclick="setSort(this,'score')">★ Rating</button>
+          <button class="filter-btn"        data-sort="rank"        onclick="setSort(this,'rank')">🏆 Rank</button>
+          <button class="filter-btn"        data-sort="title"       onclick="setSort(this,'title')">A–Z</button>
+          <button class="filter-btn"        data-sort="year_desc"   onclick="setSort(this,'year_desc')">Newest</button>
+          <button class="filter-btn"        data-sort="year_asc"    onclick="setSort(this,'year_asc')">Oldest</button>
+          <button class="filter-btn"        data-sort="popularity"  onclick="setSort(this,'popularity')">🔥 Popular</button>
+          <button class="filter-btn"        data-sort="members"     onclick="setSort(this,'members')">👥 Members</button>
+        </div>
+      </div>
+      <div id="rec-results"></div>
     </div>
     <div class="q-section">
       <div class="q-label">Genre — pick any you like</div>
@@ -354,63 +379,123 @@
   }
 
   let recSearchTimer = null;
-  let lastRecQuery = "";
-  let lastRecPage  = 1;
+  let lastRecQuery   = "";
+  let lastRecPage    = 1;
+  let recSearchData  = [];   // all fetched results accumulated
+  let recSortMode    = "relevance";
+  let recHasMore     = false;
 
   function debounceRecSearch(q) {
     clearTimeout(recSearchTimer);
-    const el = document.getElementById("rec-results");
-    if (!q || q.length < 2) { el.style.display="none"; el.innerHTML=""; return; }
-    recSearchTimer = setTimeout(() => { lastRecQuery=q; lastRecPage=1; searchRec(q,1,false); }, 420);
+    const bar = document.getElementById("rec-filter-bar");
+    const el  = document.getElementById("rec-results");
+    if (!q || q.length < 2) {
+      el.innerHTML = ""; bar.style.display = "none";
+      recSearchData = []; lastRecQuery = ""; lastRecPage = 1;
+      return;
+    }
+    recSearchTimer = setTimeout(() => {
+      lastRecQuery = q; lastRecPage = 1; recSearchData = [];
+      searchRec(q, 1, false);
+    }, 420);
   }
 
-  async function searchRec(q, page, append) {
-    const el = document.getElementById("rec-results");
-    el.style.display = "block";
-    if (!append) el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">Searching...</div>`;
-    try {
-      const r = await fetch(`${JIKAN}/anime?q=${encodeURIComponent(q)}&limit=10&page=${page}&sfw=true`);
-      const d = await r.json();
-      if (!d.data?.length && !append) {
-        el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">No results found.</div>`;
-        return;
-      }
-      const rows = (d.data||[]).map(a => `
-        <div class="search-item">
-          <img src="${a.images?.jpg?.image_url||''}" alt="" onerror="this.style.opacity=0" onclick="hideRecSearch();openModal(${a.mal_id})" style="cursor:pointer">
-          <div style="min-width:0;flex:1;cursor:pointer" onclick="hideRecSearch();openModal(${a.mal_id})">
-            <div class="si-title">${a.title}</div>
-            <div class="si-meta">${a.type||"?"} &nbsp;·&nbsp; ${a.episodes||"?"} eps &nbsp;·&nbsp; ${a.aired?.prop?.from?.year||"?"}</div>
-          </div>
-          <div class="si-score">${a.score||"—"}</div>
-          <div class="si-actions">
-            <button class="si-btn si-btn-fav"  title="Add to Favorites" onclick="addToList('fav',${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">⭐</button>
-            <button class="si-btn si-btn-want" title="Want to Watch"    onclick="addToList('want_to_watch',${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">📋</button>
-          </div>
-        </div>`).join("");
-      const hasMore = d.pagination?.has_next_page;
-      const nextPage = page + 1;
-      const moreBtn = hasMore
-        ? `<div class="search-more" onclick="searchRec(lastRecQuery,${nextPage},true)">Load more results ↓</div>`
-        : "";
-      if (append) {
-        const old = el.querySelector(".search-more");
-        if (old) old.remove();
-        el.insertAdjacentHTML("beforeend", rows + moreBtn);
-      } else {
-        el.innerHTML = rows + moreBtn;
-      }
-    } catch(e) {
-      if (!append) el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--red);font-size:.82rem">Search failed: ${e.message}</div>`;
+  function setSort(btn, mode) {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    recSortMode = mode;
+    renderRecResults();
+  }
+
+  function sortRecData(data) {
+    const arr = [...data];
+    switch (recSortMode) {
+      case "score":      return arr.sort((a,b) => (b.score||0)-(a.score||0));
+      case "rank":       return arr.sort((a,b) => (a.rank||99999)-(b.rank||99999));
+      case "title":      return arr.sort((a,b) => a.title.localeCompare(b.title));
+      case "year_desc":  return arr.sort((a,b) => (b.aired?.prop?.from?.year||0)-(a.aired?.prop?.from?.year||0));
+      case "year_asc":   return arr.sort((a,b) => (a.aired?.prop?.from?.year||9999)-(b.aired?.prop?.from?.year||9999));
+      case "popularity": return arr.sort((a,b) => (a.popularity||99999)-(b.popularity||99999));
+      case "members":    return arr.sort((a,b) => (b.members||0)-(a.members||0));
+      default:           return arr; // relevance = API order
     }
   }
 
+  function renderRecResults() {
+    const el  = document.getElementById("rec-results");
+    const bar = document.getElementById("rec-filter-bar");
+    if (!recSearchData.length) { el.innerHTML=""; bar.style.display="none"; return; }
+    bar.style.display = "block";
+    const sorted = sortRecData(recSearchData);
+    el.innerHTML = `
+      <div class="rec-results-grid">${sorted.map(recPosterCard).join("")}</div>
+      ${recHasMore ? `<button class="rec-load-more" id="rec-load-more-btn" onclick="loadMoreRecSearch()">Load more results ↓</button>` : ""}`;
+  }
+
+  function recPosterCard(a) {
+    const id    = a.mal_id;
+    const title = esc(a.title);
+    const img   = a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || "";
+    const score = a.score ? parseFloat(a.score).toFixed(1) : "N/A";
+    const year  = a.aired?.prop?.from?.year || "?";
+    const scoreColor = a.score ? (a.score>=8?"#27ae60":a.score>=7?"#e8a030":"var(--red)") : "var(--dimmer)";
+    const isFav  = inList(favorites, id);
+    const isWant = inList(wantToWatch, id);
+    return `
+      <div class="anime-poster" id="rp-${id}" onclick="openModal(${id})" style="cursor:pointer">
+        <img src="${img}" alt="${title}" loading="lazy">
+        <div class="poster-overlay" onclick="event.stopPropagation()">
+          <div class="overlay-title">${a.title}</div>
+          <div class="overlay-actions">
+            <button class="overlay-btn ob-fav${isFav?' added':''}"  id="rpfav-${id}"  onclick="quickAdd('fav',${id},'${title}','${esc(img)}')">
+              ${isFav  ? '⭐ In Favorites' : '☆ Favorites'}
+            </button>
+            <button class="overlay-btn ob-watch${isWant?' added':''}" id="rpwant-${id}" onclick="quickAdd('want_to_watch',${id},'${title}','${esc(img)}')">
+              ${isWant ? '✓ Want to Watch' : '+ Want to Watch'}
+            </button>
+          </div>
+        </div>
+        <div class="poster-info">
+          <div class="poster-title">${a.title}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
+            <div class="poster-score" style="color:${scoreColor}">★ ${score}</div>
+            <div style="font-size:.65rem;color:var(--dimmer)">${year}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  async function searchRec(q, page, append) {
+    const el  = document.getElementById("rec-results");
+    const bar = document.getElementById("rec-filter-bar");
+    if (!append) { el.innerHTML=`<div style="padding:1rem;color:var(--dim);font-size:.82rem;text-align:center">Searching...</div>`; bar.style.display="none"; }
+    try {
+      const r = await fetch(`${JIKAN}/anime?q=${encodeURIComponent(q)}&limit=20&page=${page}&sfw=true`);
+      const d = await r.json();
+      if (!d.data?.length && !append) { el.innerHTML=`<div style="padding:1rem;color:var(--dim);font-size:.82rem;text-align:center">No results found for "${q}".</div>`; return; }
+      recSearchData.push(...(d.data||[]));
+      recHasMore = !!d.pagination?.has_next_page;
+      renderRecResults();
+    } catch(e) {
+      if (!append) el.innerHTML=`<div style="padding:1rem;color:var(--red);font-size:.82rem;text-align:center">Search failed. Try again.</div>`;
+    }
+  }
+
+  async function loadMoreRecSearch() {
+    const btn = document.getElementById("rec-load-more-btn");
+    if (btn) { btn.disabled=true; btn.textContent="Loading..."; }
+    lastRecPage++;
+    await searchRec(lastRecQuery, lastRecPage, true);
+  }
+
   function hideRecSearch() {
-    const el = document.getElementById("rec-results");
-    if (el) { el.style.display="none"; el.innerHTML=""; }
+    const el  = document.getElementById("rec-results");
+    const bar = document.getElementById("rec-filter-bar");
+    if (el)  { el.innerHTML=""; }
+    if (bar) { bar.style.display="none"; }
     const inp = document.getElementById("rec-search");
     if (inp) inp.value = "";
-    lastRecQuery = ""; lastRecPage = 1;
+    lastRecQuery=""; lastRecPage=1; recSearchData=[]; recHasMore=false;
   }
 
   async function searchMAL(q, page, append) {
