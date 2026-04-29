@@ -489,7 +489,7 @@
     recState = { genreIds, minScore, mediaType, genrePage:1, simDone:false, genreDone:false, excludeIds };
 
     try {
-      // Similar from watched+favorites (all pages of each)
+      // Similar from watched+favorites
       const simAnime = [];
       const simSeen  = new Set();
       if (allSources.length) {
@@ -506,6 +506,28 @@
             if (!simSeen.has(a.mal_id)) { simSeen.add(a.mal_id); simAnime.push(a); }
           });
         });
+      }
+
+      // Enrich missing scores: recommendation entries don't carry scores,
+      // so batch-fetch them using the search endpoint (by mal_id isn't directly
+      // available, but searching by exact title gives us score quickly).
+      // More reliable: fetch /anime/{id} for entries missing a score, in batches.
+      const noScore = simAnime.filter(a => !a.score && !excludeIds.has(a.mal_id));
+      if (noScore.length) {
+        // Process in chunks of 5 to respect rate limits
+        const chunks = [];
+        for (let i = 0; i < Math.min(noScore.length, 60); i += 5) chunks.push(noScore.slice(i, i+5));
+        for (const chunk of chunks) {
+          await delay(400);
+          await Promise.allSettled(chunk.map(async a => {
+            try {
+              const r = await fetch(`${JIKAN}/anime/${a.mal_id}`);
+              const d = await r.json();
+              if (d.data?.score) a.score = d.data.score;
+              if (d.data?.images) a.images = d.data.images;
+            } catch {}
+          }));
+        }
       }
 
       const filteredSim = simAnime
@@ -588,7 +610,8 @@
     const id    = a.mal_id;
     const title = esc(a.title);
     const img   = a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || "";
-    const score = a.score || "—";
+    const score = a.score ? a.score.toFixed(2).replace(/\.?0+$/,"") : "N/A";
+    const scoreColor = a.score ? (a.score >= 8 ? "#27ae60" : a.score >= 7 ? "#e8a030" : "var(--red)") : "var(--dimmer)";
     const isFavNow   = inList(favorites, id);
     const isWatchNow = inList(watched, id);
     return `
@@ -610,7 +633,7 @@
         </div>
         <div class="poster-info">
           <div class="poster-title">${a.title}</div>
-          <div class="poster-score">${score}<span>/ 10</span></div>
+          <div class="poster-score" style="color:${scoreColor}">★ ${score}<span style="color:var(--dim)"> / 10</span></div>
         </div>
       </div>`;
   }
