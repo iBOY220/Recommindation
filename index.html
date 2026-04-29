@@ -203,7 +203,7 @@
 <div class="accent-line"></div>
 <div class="container">
   <div class="header">
-    <div class="logo">0<span class="x">x</span><span>A7</span></div>
+    <div class="logo"><span style="color:#fff">0<span class="x">x</span></span><span>A7</span></div>
     <div class="tagline">Your personal anime finder</div>
   </div>
 
@@ -304,9 +304,25 @@
         <span class="chip" data-type=""     >Any</span>
       </div>
     </div>
-    <button class="rec-btn" id="rec-btn" onclick="getRecommendations()">▶ &nbsp;Find My Anime</button>
+    <div style="display:flex;gap:.65rem;margin-top:.5rem">
+      <button class="rec-btn" id="rec-btn" style="flex:1;margin-top:0" onclick="getRecommendations()">▶ &nbsp;Find My Anime</button>
+      <button class="rec-btn" style="width:auto;padding:.9rem 1.1rem;margin-top:0;border-color:var(--dim);color:var(--dim);font-size:.9rem" title="Reset all filters" onclick="resetTags()">↺</button>
+    </div>
     <div id="rec-status"></div>
     <div id="results-area"></div>
+    <!-- sort bar shown after results load -->
+    <div id="rec-sort-bar" style="display:none;margin-top:1rem">
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:.85rem">
+        <span style="font-size:.72rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-right:.25rem">Sort</span>
+        <button class="filter-btn active" data-rs="score"      onclick="setRecSort(this,'score')">★ Rating</button>
+        <button class="filter-btn"        data-rs="rank"       onclick="setRecSort(this,'rank')">🏆 Rank</button>
+        <button class="filter-btn"        data-rs="title"      onclick="setRecSort(this,'title')">A–Z</button>
+        <button class="filter-btn"        data-rs="year_desc"  onclick="setRecSort(this,'year_desc')">Newest</button>
+        <button class="filter-btn"        data-rs="year_asc"   onclick="setRecSort(this,'year_asc')">Oldest</button>
+        <button class="filter-btn"        data-rs="popularity" onclick="setRecSort(this,'popularity')">🔥 Popular</button>
+        <button class="filter-btn"        data-rs="members"    onclick="setRecSort(this,'members')">👥 Members</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -631,6 +647,51 @@
   // ── RECOMMENDATIONS — purely tag/filter based ──
   const delay = ms => new Promise(r => setTimeout(r,ms));
 
+  let recAllData  = [];   // all loaded genre results
+  let recSortRec  = "score";
+
+  function resetTags() {
+    document.querySelectorAll("#genre-chips .chip").forEach(c => c.classList.remove("sel-g"));
+    document.querySelectorAll("#mood-chips .chip").forEach(c  => c.classList.remove("sel-m"));
+    document.querySelectorAll("#len-chips .chip").forEach(c   => c.classList.remove("sel-l"));
+    document.getElementById("results-area").innerHTML = "";
+    document.getElementById("rec-status").innerHTML  = "";
+    document.getElementById("rec-sort-bar").style.display = "none";
+    recAllData = [];
+  }
+
+  function setRecSort(btn, mode) {
+    document.querySelectorAll("#rec-sort-bar .filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    recSortRec = mode;
+    renderRecGrid();
+  }
+
+  function sortRecAnime(data) {
+    const arr = [...data];
+    switch (recSortRec) {
+      case "rank":       return arr.sort((a,b) => (a.rank||99999)-(b.rank||99999));
+      case "title":      return arr.sort((a,b) => a.title.localeCompare(b.title));
+      case "year_desc":  return arr.sort((a,b) => (b.aired?.prop?.from?.year||0)-(a.aired?.prop?.from?.year||0));
+      case "year_asc":   return arr.sort((a,b) => (a.aired?.prop?.from?.year||9999)-(b.aired?.prop?.from?.year||9999));
+      case "popularity": return arr.sort((a,b) => (a.popularity||99999)-(b.popularity||99999));
+      case "members":    return arr.sort((a,b) => (b.members||0)-(a.members||0));
+      default:           return arr.sort((a,b) => (b.score||0)-(a.score||0)); // score
+    }
+  }
+
+  function renderRecGrid() {
+    const area = document.getElementById("results-area");
+    const sorted = sortRecAnime(recAllData);
+    const genreLabel = recState.lastLabel || "Results";
+    area.innerHTML = `
+      <div class="results-section">
+        <div class="results-heading"><span>${genreLabel} — ${sorted.length} picks</span></div>
+        <div class="results-grid" id="genre-results-grid">${sorted.map(posterCard).join("")}</div>
+        ${!recState.genreDone ? `<button class="load-more-btn" id="load-more-genre" onclick="loadMoreGenre()">Load more anime ↓</button>` : ""}
+      </div>`;
+  }
+
   async function getRecommendations() {
     const genreIds  = [...document.querySelectorAll("#genre-chips .chip.sel-g")].map(c=>c.dataset.id).join(",");
     const moodChip  = document.querySelector("#mood-chips .chip.sel-m");
@@ -641,17 +702,25 @@
     const btn    = document.getElementById("rec-btn");
     const status = document.getElementById("rec-status");
     const area   = document.getElementById("results-area");
+    const sortBar= document.getElementById("rec-sort-bar");
 
-    btn.disabled = true; area.innerHTML = "";
+    btn.disabled = true; area.innerHTML = ""; sortBar.style.display = "none"; recAllData = [];
     status.innerHTML = `<div class="loading-state"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br>Fetching from MyAnimeList...</div>`;
 
-    recState = { genreIds, minScore, mediaType, genrePage:1, genreDone:false, excludeIds: new Set() };
+    const genreLabel = [
+      genreIds ? [...document.querySelectorAll("#genre-chips .chip.sel-g")].map(c=>c.textContent).join(", ") : "All Genres",
+      minScore ? `Score ≥ ${minScore}` : "",
+      mediaType ? mediaType.toUpperCase() : ""
+    ].filter(Boolean).join(" · ");
+
+    recState = { genreIds, minScore, mediaType, genrePage:1, genreDone:false, excludeIds:new Set(), lastLabel:genreLabel };
 
     try {
       const { genreAnime, hasMore } = await fetchGenrePage(1);
       genreAnime.forEach(a => recState.excludeIds.add(a.mal_id));
       recState.genreDone = !hasMore;
       recState.genrePage = 2;
+      recAllData = genreAnime;
 
       status.innerHTML = ""; btn.disabled = false;
 
@@ -660,18 +729,8 @@
         return;
       }
 
-      const genreLabel = [
-        genreIds ? [...document.querySelectorAll("#genre-chips .chip.sel-g")].map(c=>c.textContent).join(", ") : "All Genres",
-        minScore ? `Score ≥ ${minScore}` : "",
-        mediaType ? mediaType.toUpperCase() : ""
-      ].filter(Boolean).join(" · ");
-
-      area.innerHTML = `
-        <div class="results-section">
-          <div class="results-heading"><span>${genreLabel}</span></div>
-          <div class="results-grid" id="genre-results-grid">${genreAnime.map(posterCard).join("")}</div>
-          ${!recState.genreDone ? `<button class="load-more-btn" id="load-more-genre" onclick="loadMoreGenre()">Load more anime ↓</button>` : ""}
-        </div>`;
+      sortBar.style.display = "block";
+      renderRecGrid();
 
     } catch {
       status.innerHTML = `<div class="err">Something went wrong. Please try again.</div>`;
@@ -701,13 +760,11 @@
       const { genreAnime, hasMore } = await fetchGenrePage(recState.genrePage);
       recState.genrePage++;
       genreAnime.forEach(a => recState.excludeIds.add(a.mal_id));
-      if (!hasMore) { recState.genreDone = true; }
-      const grid = document.getElementById("genre-results-grid");
-      if (grid) grid.insertAdjacentHTML("beforeend", genreAnime.map(posterCard).join(""));
-      if (recState.genreDone) { btn.remove(); }
-      else { btn.disabled=false; btn.textContent="Load more anime ↓"; }
+      recAllData.push(...genreAnime);
+      if (!hasMore) recState.genreDone = true;
+      renderRecGrid();
     } catch {
-      btn.disabled=false; btn.textContent="Load more anime ↓";
+      if (btn) { btn.disabled=false; btn.textContent="Load more anime ↓"; }
     }
   }
 
