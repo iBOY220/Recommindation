@@ -52,6 +52,11 @@
     .si-title { font-size:.88rem; font-weight:500; color:var(--text); }
     .si-meta { font-size:.73rem; color:var(--dim); margin-top:2px; }
     .si-score { margin-left:auto; font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--red); flex-shrink:0; }
+    .si-actions { display:flex; gap:.3rem; margin-left:.5rem; flex-shrink:0; }
+    .si-btn { width:28px; height:28px; border-radius:6px; border:.5px solid var(--border); background:var(--surface2); cursor:pointer; font-size:.8rem; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+    .si-btn:hover { background:var(--border); }
+    .si-btn-fav:hover  { background:#2a1a0a; border-color:var(--gold); }
+    .si-btn-want:hover { background:#0a1a0e; border-color:#27ae60; }
     .search-more { padding:.6rem 1rem; text-align:center; font-size:.78rem; color:var(--purple); cursor:pointer; border-top:.5px solid var(--border2); transition:background .15s; }
     .search-more:hover { background:var(--surface2); }
 
@@ -215,20 +220,28 @@
       </div>
     </div>
 
-    <!-- Watch List -->
+    <!-- WANT TO WATCH -->
     <div class="list-section" id="want-section">
       <div class="section-divider">
-        <span>✓ Watch List <span class="section-count" id="want-count"></span></span>
+        <span>✓ Want to Watch <span class="section-count" id="want-count"></span></span>
         <button class="clear-btn" onclick="clearList('want_to_watch')">Clear all</button>
       </div>
       <div class="card-grid" id="want-grid">
-        <div class="empty-state">Nothing in Watch List yet.<br>Search above and click to add.</div>
+        <div class="empty-state">Nothing in want to watch yet.<br>Search above and click to add.</div>
       </div>
     </div>
   </div>
 
   <!-- RECOMMENDATIONS PANEL -->
   <div class="panel" id="panel-rec">
+    <div class="q-section">
+      <div class="q-label">Search a specific anime</div>
+      <div class="search-wrap" style="margin-bottom:0">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="rec-search" placeholder="Search by title on MyAnimeList..." oninput="debounceRecSearch(this.value)" autocomplete="off">
+      </div>
+      <div class="search-results" id="rec-results" style="margin-top:.5rem;margin-bottom:0"></div>
+    </div>
     <div class="q-section">
       <div class="q-label">Genre — pick any you like</div>
       <div class="chips" id="genre-chips">
@@ -278,7 +291,7 @@
     <div id="modal-content"></div>
     <div class="modal-actions">
       <button class="modal-btn" id="btn-fav"     onclick="toggleList('fav')">☆ &nbsp;Add to Favorites</button>
-      <button class="modal-btn" id="btn-want" onclick="toggleList('want_to_watch')">+ &nbsp;Watch List</button>
+      <button class="modal-btn" id="btn-want" onclick="toggleList('want_to_watch')">+ &nbsp;Want to Watch</button>
       <button class="modal-btn" onclick="closeModal()">✕ &nbsp;Close</button>
     </div>
   </div>
@@ -340,6 +353,49 @@
     searchTimer = setTimeout(() => { lastQuery=q; searchPage=1; searchMAL(q,1,false); }, 420);
   }
 
+  let recSearchTimer = null;
+  function debounceRecSearch(q) {
+    clearTimeout(recSearchTimer);
+    const el = document.getElementById("rec-results");
+    if (!q || q.length < 2) { el.style.display="none"; return; }
+    recSearchTimer = setTimeout(() => searchRec(q, 1, false), 420);
+  }
+
+  async function searchRec(q, page, append) {
+    const el = document.getElementById("rec-results");
+    el.style.display = "block";
+    if (!append) el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">Searching...</div>`;
+    try {
+      const r = await fetch(`${JIKAN}/anime?q=${encodeURIComponent(q)}&limit=10&page=${page}&sfw=true`);
+      const d = await r.json();
+      if (!d.data?.length && !append) { el.innerHTML=`<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">No results found.</div>`; return; }
+      const rows = d.data.map(a => `
+        <div class="search-item">
+          <img src="${a.images?.jpg?.image_url||''}" alt="" onerror="this.style.opacity=0" onclick="hideRecSearch();openModal(${a.mal_id})" style="cursor:pointer">
+          <div style="min-width:0;flex:1;cursor:pointer" onclick="hideRecSearch();openModal(${a.mal_id})">
+            <div class="si-title">${a.title}</div>
+            <div class="si-meta">${a.type||"?"} &nbsp;·&nbsp; ${a.episodes||"?"} eps &nbsp;·&nbsp; ${a.aired?.prop?.from?.year||"?"}</div>
+          </div>
+          <div class="si-score">${a.score||"—"}</div>
+          <div class="si-actions">
+            <button class="si-btn si-btn-fav"  title="Add to Favorites" onclick="addToList('fav',${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">⭐</button>
+            <button class="si-btn si-btn-want" title="Want to Watch"    onclick="addToList('want_to_watch',${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">📋</button>
+          </div>
+        </div>`).join("");
+      const hasMore = d.pagination?.has_next_page;
+      const moreBtn = hasMore ? `<div class="search-more" onclick="searchRec('${esc(q)}',${page+1},true)">Load more results ↓</div>` : "";
+      if (append) { const old=el.querySelector(".search-more"); if(old)old.remove(); el.insertAdjacentHTML("beforeend",rows+moreBtn); }
+      else el.innerHTML = rows + moreBtn;
+    } catch { if (!append) el.innerHTML=`<div style="padding:.75rem 1rem;color:var(--red);font-size:.82rem">Search failed.</div>`; }
+  }
+
+  function hideRecSearch() {
+    const el = document.getElementById("rec-results");
+    if (el) { el.style.display="none"; el.innerHTML=""; }
+    const inp = document.getElementById("rec-search");
+    if (inp) inp.value = "";
+  }
+
   async function searchMAL(q, page, append) {
     const el = document.getElementById("watch-results");
     if (!q || q.length < 2) { el.style.display="none"; return; }
@@ -354,13 +410,17 @@
         return;
       }
       const rows = d.data.map(a => `
-        <div class="search-item" onclick="addToList('want_to_watch',${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">
-          <img src="${a.images?.jpg?.image_url||''}" alt="" onerror="this.style.opacity=0">
-          <div style="min-width:0">
+        <div class="search-item">
+          <img src="${a.images?.jpg?.image_url||''}" alt="" onerror="this.style.opacity=0" onclick="hideSearch();openModal(${a.mal_id})" style="cursor:pointer">
+          <div style="min-width:0;flex:1;cursor:pointer" onclick="hideSearch();openModal(${a.mal_id})">
             <div class="si-title">${a.title}</div>
             <div class="si-meta">${a.type||"?"} &nbsp;·&nbsp; ${a.episodes||"?"} eps &nbsp;·&nbsp; ${a.aired?.prop?.from?.year||"?"}</div>
           </div>
           <div class="si-score">${a.score||"—"}</div>
+          <div class="si-actions">
+            <button class="si-btn si-btn-fav" title="Add to Favorites"   onclick="addToList('fav','${a.mal_id}','${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">⭐</button>
+            <button class="si-btn si-btn-want" title="Want to Watch"     onclick="addToList('want_to_watch',${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">📋</button>
+          </div>
         </div>`).join("");
 
       const hasMore = d.pagination?.has_next_page;
@@ -395,7 +455,7 @@
     searchPage = 1; lastQuery = "";
   }
 
-  // ── LIST MANAGEMENT (favorites & Watch List are SEPARATE) ──
+  // ── LIST MANAGEMENT (favorites & want to watch are SEPARATE) ──
   function inList(list, id) { return list.some(x=>x.id===id); }
 
   function addToList(type, id, title, img) {
@@ -412,7 +472,7 @@
   }
 
   function clearList(type) {
-    const label = type==="fav" ? "favorites" : "Watch List list";
+    const label = type==="fav" ? "favorites" : "want to watch list";
     if (!confirm(`Clear your entire ${label}?`)) return;
     if (type==="fav") favorites = [];
     else              wantToWatch = [];
@@ -430,7 +490,7 @@
     const g = document.getElementById(gridId);
     const emptyMsg = type==="fav"
       ? "No favorites yet.<br>Open any anime and click \"Add to Favorites\"."
-      : "Nothing in Watch List yet.<br>Search above and click to add.";
+      : "Nothing in want to watch yet.<br>Search above and click to add.";
     if (!list.length) { g.innerHTML=`<div class="empty-state">${emptyMsg}</div>`; return; }
     g.innerHTML = list.map(item=>`
       <div class="anime-card" onclick="openModal(${item.id})">
@@ -462,8 +522,8 @@
     const bw = document.getElementById("btn-want");
     if (inList(favorites, id)) { bf.textContent="⭐ In Favorites";  bf.classList.add("active-fav"); }
     else                       { bf.textContent="☆ Add to Favorites"; bf.classList.remove("active-fav"); }
-    if (inList(wantToWatch, id))   { bw.textContent="✓ In Watch List";     bw.classList.add("active-want"); }
-    else                       { bw.textContent="+ Watch List"; bw.classList.remove("active-want"); }
+    if (inList(wantToWatch, id))   { bw.textContent="✓ In Want to Watch";     bw.classList.add("active-want"); }
+    else                       { bw.textContent="+ Want to Watch"; bw.classList.remove("active-want"); }
   }
 
   // ── RECOMMENDATIONS — paginated, no limit ──
@@ -620,7 +680,7 @@
             </button>
             <button class="overlay-btn ob-watch${isWatchNow?' added':''}" id="pwant-${id}"
               onclick="event.stopPropagation();quickAdd('want_to_watch',${id},'${title}','${esc(img)}')">
-              ${isWatchNow ? '✓ In Watch List' : '+ Watch List'}
+              ${isWatchNow ? '✓ In Want to Watch' : '+ Want to Watch'}
             </button>
           </div>
         </div>
@@ -639,10 +699,10 @@
       // toggle off
       if (type === "fav") favorites = favorites.filter(x => x.id !== id);
       else                wantToWatch = wantToWatch.filter(x => x.id !== id);
-      if (btn) { btn.classList.remove("added"); btn.textContent = type==="fav" ? "☆ Add to Favorites" : "+ Watch List"; }
+      if (btn) { btn.classList.remove("added"); btn.textContent = type==="fav" ? "☆ Add to Favorites" : "+ Want to Watch"; }
     } else {
       list.push({ id, title, img });
-      if (btn) { btn.classList.add("added"); btn.textContent = type==="fav" ? "⭐ In Favorites" : "✓ In Watch List"; }
+      if (btn) { btn.classList.add("added"); btn.textContent = type==="fav" ? "⭐ In Favorites" : "✓ In Want to Watch"; }
     }
     save(); renderAll();
   }
