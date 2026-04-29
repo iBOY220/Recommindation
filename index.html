@@ -173,7 +173,7 @@
     .modal-btn { flex:1; min-width:120px; padding:.65rem; background:transparent; border:.5px solid var(--border); border-radius:8px; color:var(--dim); cursor:pointer; font-size:.82rem; transition:all .2s; font-family:'Inter',sans-serif; }
     .modal-btn:hover { border-color:var(--purple); color:#c090e0; }
     .modal-btn.active-fav  { background:#1e180a; border-color:var(--gold); color:var(--gold); }
-    .modal-btn.active-watch { background:#0e1e0e; border-color:#27ae60; color:#70c070; }
+    .modal-btn.active-want { background:#0e1e0e; border-color:#27ae60; color:#70c070; }
 
     @media(max-width:520px) {
       .modal-hero { flex-direction:column; }
@@ -215,14 +215,14 @@
       </div>
     </div>
 
-    <!-- WATCHED -->
-    <div class="list-section" id="watched-section">
+    <!-- Watch List -->
+    <div class="list-section" id="want-section">
       <div class="section-divider">
-        <span>✓ Watched <span class="section-count" id="watched-count"></span></span>
-        <button class="clear-btn" onclick="clearList('watched')">Clear all</button>
+        <span>✓ Watch List <span class="section-count" id="want-count"></span></span>
+        <button class="clear-btn" onclick="clearList('want_to_watch')">Clear all</button>
       </div>
-      <div class="card-grid" id="watched-grid">
-        <div class="empty-state">No watched anime yet.<br>Search above and click to add.</div>
+      <div class="card-grid" id="want-grid">
+        <div class="empty-state">Nothing in Watch List yet.<br>Search above and click to add.</div>
       </div>
     </div>
   </div>
@@ -278,7 +278,7 @@
     <div id="modal-content"></div>
     <div class="modal-actions">
       <button class="modal-btn" id="btn-fav"     onclick="toggleList('fav')">☆ &nbsp;Add to Favorites</button>
-      <button class="modal-btn" id="btn-watched" onclick="toggleList('watched')">+ &nbsp;Add to Watched</button>
+      <button class="modal-btn" id="btn-want" onclick="toggleList('want_to_watch')">+ &nbsp;Watch List</button>
       <button class="modal-btn" onclick="closeModal()">✕ &nbsp;Close</button>
     </div>
   </div>
@@ -287,10 +287,10 @@
 <script>
   const JIKAN = "https://api.jikan.moe/v4";
   const LS_FAV     = "0xa7_favorites";
-  const LS_WATCHED = "0xa7_watched";
+  const LS_WANT = "0xa7_want_to_watch";
 
   let favorites = JSON.parse(localStorage.getItem(LS_FAV)     || "[]");
-  let watched   = JSON.parse(localStorage.getItem(LS_WATCHED) || "[]");
+  let wantToWatch   = JSON.parse(localStorage.getItem(LS_WANT) || "[]");
 
   let currentModal = null; // { id, title, img }
   let searchTimer  = null;
@@ -302,7 +302,7 @@
 
   function save() {
     localStorage.setItem(LS_FAV,     JSON.stringify(favorites));
-    localStorage.setItem(LS_WATCHED, JSON.stringify(watched));
+    localStorage.setItem(LS_WANT, JSON.stringify(wantToWatch));
   }
 
   // ── INIT ──
@@ -354,7 +354,7 @@
         return;
       }
       const rows = d.data.map(a => `
-        <div class="search-item" onclick="addToList('watched',${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">
+        <div class="search-item" onclick="addToList('want_to_watch',${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">
           <img src="${a.images?.jpg?.image_url||''}" alt="" onerror="this.style.opacity=0">
           <div style="min-width:0">
             <div class="si-title">${a.title}</div>
@@ -395,11 +395,11 @@
     searchPage = 1; lastQuery = "";
   }
 
-  // ── LIST MANAGEMENT (favorites & watched are SEPARATE) ──
+  // ── LIST MANAGEMENT (favorites & Watch List are SEPARATE) ──
   function inList(list, id) { return list.some(x=>x.id===id); }
 
   function addToList(type, id, title, img) {
-    const list = type==="fav" ? favorites : watched;
+    const list = type==="fav" ? favorites : wantToWatch;
     if (inList(list, id)) { hideSearch(); return; }
     list.push({ id, title, img });
     save(); renderAll(); hideSearch();
@@ -407,30 +407,30 @@
 
   function removeFromList(type, id) {
     if (type==="fav")     favorites = favorites.filter(x=>x.id!==id);
-    else                  watched   = watched.filter(x=>x.id!==id);
+    else                  wantToWatch = wantToWatch.filter(x=>x.id!==id);
     save(); renderAll();
   }
 
   function clearList(type) {
-    const label = type==="fav" ? "favorites" : "watched list";
+    const label = type==="fav" ? "favorites" : "Watch List list";
     if (!confirm(`Clear your entire ${label}?`)) return;
     if (type==="fav") favorites = [];
-    else              watched   = [];
+    else              wantToWatch = [];
     save(); renderAll();
   }
 
   function renderAll() {
     renderGrid("fav-grid",     favorites, "fav");
-    renderGrid("watched-grid", watched,   "watched");
+    renderGrid("want-grid", wantToWatch, "want_to_watch");
     document.getElementById("fav-count").textContent     = favorites.length ? `(${favorites.length})` : "";
-    document.getElementById("watched-count").textContent = watched.length   ? `(${watched.length})`   : "";
+    document.getElementById("want-count").textContent = wantToWatch.length   ? `(${wantToWatch.length})`   : "";
   }
 
   function renderGrid(gridId, list, type) {
     const g = document.getElementById(gridId);
     const emptyMsg = type==="fav"
       ? "No favorites yet.<br>Open any anime and click \"Add to Favorites\"."
-      : "No watched anime yet.<br>Search above and click to add.";
+      : "Nothing in Watch List yet.<br>Search above and click to add.";
     if (!list.length) { g.innerHTML=`<div class="empty-state">${emptyMsg}</div>`; return; }
     g.innerHTML = list.map(item=>`
       <div class="anime-card" onclick="openModal(${item.id})">
@@ -445,10 +445,10 @@
   function toggleList(type) {
     if (!currentModal) return;
     const { id, title, img } = currentModal;
-    const list = type==="fav" ? favorites : watched;
+    const list = type==="fav" ? favorites : wantToWatch;
     if (inList(list, id)) {
       if (type==="fav") favorites = favorites.filter(x=>x.id!==id);
-      else              watched   = watched.filter(x=>x.id!==id);
+      else              wantToWatch = wantToWatch.filter(x=>x.id!==id);
     } else {
       list.push({ id, title, img });
     }
@@ -459,11 +459,11 @@
     if (!currentModal) return;
     const { id } = currentModal;
     const bf = document.getElementById("btn-fav");
-    const bw = document.getElementById("btn-watched");
+    const bw = document.getElementById("btn-want");
     if (inList(favorites, id)) { bf.textContent="⭐ In Favorites";  bf.classList.add("active-fav"); }
     else                       { bf.textContent="☆ Add to Favorites"; bf.classList.remove("active-fav"); }
-    if (inList(watched, id))   { bw.textContent="✓ In Watched";     bw.classList.add("active-watch"); }
-    else                       { bw.textContent="+ Add to Watched"; bw.classList.remove("active-watch"); }
+    if (inList(wantToWatch, id))   { bw.textContent="✓ In Watch List";     bw.classList.add("active-want"); }
+    else                       { bw.textContent="+ Watch List"; bw.classList.remove("active-want"); }
   }
 
   // ── RECOMMENDATIONS — paginated, no limit ──
@@ -483,13 +483,13 @@
     btn.disabled = true; area.innerHTML = "";
     status.innerHTML = `<div class="loading-state"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br>Fetching from MyAnimeList...</div>`;
 
-    const allSources = [...new Map([...favorites,...watched].map(x=>[x.id,x])).values()];
+    const allSources = [...new Map([...favorites,...wantToWatch].map(x=>[x.id,x])).values()];
     const excludeIds = new Set(allSources.map(x=>x.id));
 
     recState = { genreIds, minScore, mediaType, genrePage:1, simDone:false, genreDone:false, excludeIds };
 
     try {
-      // Similar from watched+favorites — fetch all in parallel (no sequential delays)
+      // Similar from want-to-watch+favorites — fetch all in parallel (no sequential delays)
       const simAnime = [];
       const simSeen  = new Set();
       if (allSources.length) {
@@ -607,7 +607,7 @@
       ? (a.score >= 8 ? "#27ae60" : a.score >= 7 ? "#e8a030" : "var(--red)")
       : "var(--dimmer)";
     const isFavNow   = inList(favorites, id);
-    const isWatchNow = inList(watched,   id);
+    const isWatchNow = inList(wantToWatch,   id);
     return `
       <div class="anime-poster" id="poster-${id}" onclick="openModal(${id})" style="cursor:pointer">
         <img src="${img}" alt="${title}" loading="lazy">
@@ -618,9 +618,9 @@
               onclick="event.stopPropagation();quickAdd('fav',${id},'${title}','${esc(img)}')">
               ${isFavNow ? '⭐ In Favorites' : '☆ Add to Favorites'}
             </button>
-            <button class="overlay-btn ob-watch${isWatchNow?' added':''}" id="pwatch-${id}"
-              onclick="event.stopPropagation();quickAdd('watched',${id},'${title}','${esc(img)}')">
-              ${isWatchNow ? '✓ In Watched' : '+ Add to Watched'}
+            <button class="overlay-btn ob-watch${isWatchNow?' added':''}" id="pwant-${id}"
+              onclick="event.stopPropagation();quickAdd('want_to_watch',${id},'${title}','${esc(img)}')">
+              ${isWatchNow ? '✓ In Watch List' : '+ Watch List'}
             </button>
           </div>
         </div>
@@ -632,17 +632,17 @@
   }
 
   function quickAdd(type, id, title, img) {
-    const list = type === "fav" ? favorites : watched;
+    const list = type === "fav" ? favorites : wantToWatch;
     const btnId = type === "fav" ? `pfav-${id}` : `pwatch-${id}`;
     const btn = document.getElementById(btnId);
     if (inList(list, id)) {
       // toggle off
       if (type === "fav") favorites = favorites.filter(x => x.id !== id);
-      else                watched   = watched.filter(x => x.id !== id);
-      if (btn) { btn.classList.remove("added"); btn.textContent = type==="fav" ? "☆ Add to Favorites" : "+ Add to Watched"; }
+      else                wantToWatch = wantToWatch.filter(x => x.id !== id);
+      if (btn) { btn.classList.remove("added"); btn.textContent = type==="fav" ? "☆ Add to Favorites" : "+ Watch List"; }
     } else {
       list.push({ id, title, img });
-      if (btn) { btn.classList.add("added"); btn.textContent = type==="fav" ? "⭐ In Favorites" : "✓ In Watched"; }
+      if (btn) { btn.classList.add("added"); btn.textContent = type==="fav" ? "⭐ In Favorites" : "✓ In Watch List"; }
     }
     save(); renderAll();
   }
