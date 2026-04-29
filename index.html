@@ -1,9 +1,250 @@
+
+Recommendation
+/
+Claude finished the response
+You said: An you do something like “Smart Anime Recommendation Engine”
+An you do something like “Smart Anime Recommendation Engine”
+If yes tell me what you need or the steps
+
+6:50 PM
+Claude responded: Yes, absolutely!
+
+Check frontend design skill
+Check frontend design skill
+Yes, absolutely! Here's how it works and what I need from you:
+
+What I'll build: A React artifact powered by the Anthropic API (Claude AI inside the app) that takes your preferences and recommends anime with smart reasoning — not just a simple list.
+
+Features I can include:
+
+Mood/genre selector (action, romance, isekai, psychological, etc.)
+Preference inputs (favorite anime, what you're in the mood for)
+AI-generated recommendations with explanations why each fits you
+Ratings, episode counts, where to watch
+"Surprise me" button for random picks
+What I need from you — just pick your preferences:
+
+What style do you want? Dark/cinematic, bright/playful, or minimal/clean?
+Any must-have features? (e.g., filter by length, genre tags, mood slider, streaming platform filter)
+Anything you definitely don't want?
+Or if you just want me to go ahead and build it with my own creative choices, just say "just build it" and I'll surprise you with a polished version right away! 🎌
+
+You said: ask questions
+ask questions
+
+6:52 PM
+Claude responded: What are your preferences?
+What are your preferences? Your answers will help me tailor the recommendation engine perfectly for you! 🎌
+
+You said: Q: What's your experience with anime?
+Q: What's your experience with anime?
+A: anything
+
+Q: What vibe are you usually in the mood for? (Select all that apply)
+A: [No preference]
+
+Q: What visual style should the app have?
+A: Dark & cinematic
+
+6:52 PM
+Claude responded: Perfect!
+Perfect! I'll build you a dark & cinematic anime recommendation engine that works for any experience level and any genre. Building it now! 🎬
+
+
+
+Here's your Anime Oracle — dark, cinematic, and fully AI-powered. Here's how to use it:
+
+Pick your genres (multi-select — choose as many as you want)
+Select your current mood (one pick)
+Choose episode length preference
+Optionally drop in anime you've loved for more personalized picks
+Hit Find My Anime — Claude AI inside the app generates 5 tailored recommendations with reasons why each fits you
+Every time you adjust your selections and hit the button again, you get fresh recommendations. Enjoy! 🎌
+
+You said: lets make it more simple for the user, for example:
+lets make it more simple for the user, for example:
+option 1:  let me have my anime that i have watched and loved so you can keep it in you mined, option2: ask questions that i can answer then you can give me the recommended animes with there poster, after clicking the poster.
+
+and it will be even better to make this from myanimelist API so you can give me details about the anime and some anime that are similar to, and there ratings
+
+7:00 PM
+Claude responded: Great vision!
+Great vision! Let me be upfront about one thing before building:
+
+MyAnimeList API requires an API key/client ID that needs to be registered on their developer portal — I can't embed that directly. But I have two solid alternatives:
+
+Option A — Jikan API (unofficial MAL wrapper, completely free, no key needed) — gives real MAL data: ratings, posters, synopsis, episode count, genres, and even similar/related anime. This is what I'd use.
+
+Option B — Keep it Claude AI only — no real posters but smarter personalized reasoning.
+
+I'd go with Jikan API — it pulls directly from MyAnimeList data, so ratings and info are accurate and current.
+
+Now let me ask a couple quick things before I build:
+
+Your choices will shape the whole experience — what do you prefer?
+
+You said: Q: For the 'anime I've watched' list — how should it work?
+Q: For the 'anime I've watched' list — how should it work?
+A: Search and add from MAL database
+
+Q: After clicking an anime poster, what should appear?
+A: Full details + similar anime
+
+7:01 PM
+Claude responded: Perfect choices!
+Perfect choices! Building it now — this will be a full MAL-powered app with real posters, ratings, and similar anime recommendations.
+
+
+
+Here's the full upgraded experience! Here's what's inside:
+
+Tab 1 — My Watched List
+
+Search any anime from the real MAL database
+Click to add it — posters appear in your personal grid
+Hover a card to remove it
+Click any poster to open full details
+Tab 2 — Get Recommendations
+
+Pick genres, mood, and length
+Claude AI generates 8 tailored picks, then fetches real MAL data for each (poster, score, episodes)
+Click any poster to open the detail modal
+Detail Modal (on any poster click)
+
+Full info: score, episodes, status, year, genres, Japanese title, synopsis
+Similar anime section pulled directly from MAL — click any to open its details too
+You said: i want to post it in GitHub so i can make it as my page to search, so make it as .
+i want to post it in GitHub so i can make it as my page to search, so make it as .html
+
+7:06 PM
+Claude responded: One important note before I build: the app uses the Anthropic API for AI recommendations, which requires an API key.
+
+Check skills available
+Check skills available
+One important note before I build: the app uses the Anthropic API for AI recommendations, which requires an API key. Since this will be a public GitHub page, I'll add a simple API key input field in the app so you (or anyone using it) can enter their own key — it stays local in the browser, never sent anywhere else.
+
+The Jikan/MAL data is completely free with no key needed.
+
+
+Creating the full standalone HTML file for GitHub Pages
+Creating the full standalone HTML file for GitHub Pages
+Claude's response was interrupted
+You said: i want to post it in GitHub so i can make it as my page to search, so make it as .
+i want to post it in GitHub so i can make it as my page to search, so make it as .html about the API, write my API Key in the script so it can exist there, the website for me only just tell me how to get the API
+
+7:08 PM
+Claude responded: Your file is ready!
+
+Created a file, ran a command, read a file
+Created a file, ran a command, read a file
+Your file is ready! Here's everything you need:
+
+How to get your Anthropic API Key:
+
+Go to console.anthropic.com
+Sign up or log in
+Click "API Keys" in the left sidebar
+Click "Create Key" → copy it
+Open anime-oracle.html in any text editor, find this line near the top of the script:
+   const ANTHROPIC_API_KEY = "YOUR_API_KEY_HERE";
+Replace YOUR_API_KEY_HERE with your actual key.
+
+How to publish on GitHub Pages:
+
+Create a new GitHub repo (e.g. anime-oracle)
+Upload anime-oracle.html and rename it to index.html
+Go to Settings → Pages → Source → main branch
+Your site will be live at https://yourusername.github.io/anime-oracle
+⚠️ Important: Since it's your personal site, the API key in the file is fine — but keep the repo private so others can't see or use your key.
+
+
+Anime oracle
+Code · HTML 
+You said: i dont want anthropic API Key, i want MAL API
+i dont want anthropic API Key, i want MAL API
+
+7:14 PM
+Claude responded: The challenge with MAL's official API is that it requires a backend server to hide the client secret — you can't safely call it directly from a browser/GitHub …
+The challenge with MAL's official API is that it requires a backend server to hide the client secret — you can't safely call it directly from a browser/GitHub Pages without exposing credentials.
+
+The good news: The app already uses Jikan API which is 100% unofficial MAL data — same database, same ratings, same posters, zero API key needed. The only part that used Anthropic was generating the recommendation titles.
+
+I can replace the Anthropic part with pure Jikan logic:
+
+You said: Q: Without AI, how should recommendations be generated?
+Q: Without AI, how should recommendations be generated?
+A: Both: filter by genre AND pull similar from watched list
+
+7:14 PM
+Claude responded: Perfect.
+Perfect. Building it now — fully MAL-powered via Jikan, no API key needed, works on GitHub Pages out of the box.
+
+
+Created 2 files, ran 2 commands, read a file
+Created 2 files, ran 2 commands, read a file
+Done! Zero API keys. Zero login. Works out of the box.
+
+Here's what's inside the file:
+
+Tab 1 — My Watched List: Search real MAL titles, click to add them as poster cards. Hover to remove. Click any card to open full details.
+
+Tab 2 — Get Recommendations: Pick genres, rating filter, and format — then hit Find. Results come in two sections: "Similar to your watched list" (pulled from MAL's own recommendations for each anime you added) and "Top picks by your filters" (sorted by score from MAL's database).
+
+Clicking any poster opens a full modal: score, episodes, status, year, ranking, studio, genres, synopsis, and similar anime from MAL — click any similar anime to open its details too.
+
+To put it on GitHub Pages:
+
+Create a new GitHub repo
+Upload the file and rename it index.html
+Go to Settings → Pages → Branch: main → Save
+Live at https://yourusername.github.io/repo-name
+
+Anime oracle
+Code · HTML 
+You said: in recommendation there is error,
+1777480095636_image.png
+in recommendation there is error,
+
+add favorite animes that i have watched and loved before, and let the website save my change event if i close the website s the favorite anime still there, and change the name from Anime Oracle to 0xA7, and remove this "Data from MyAnimeList · Powered by Jikan API · No login required"
+
+7:30 PM
+Claude responded: The error is because the old file still had the Anthropic API call leftover.
+The error is because the old file still had the Anthropic API call leftover. The new version is pure Jikan — I'll fix that, add localStorage so your watched list saves permanently, and update the branding.
+
+
+Created a file, ran a command, read a file
+Created a file, ran a command, read a file
+All done! Here's everything that changed:
+
+Fixed:
+
+Removed all Anthropic API calls — recommendations now run 100% on Jikan/MAL, zero errors
+New features:
+
+⭐ Favorites section — click any anime poster in the modal and hit "Add to Favorites". Favorites appear at the top of your list with a star
+localStorage — your watched list and favorites are saved in the browser permanently. Close the tab, restart your PC — they're still there
+Rebranded to 0xA7, subtitle removed
+"Clear all" buttons for both watched and favorites sections
+To deploy on GitHub Pages — rename the file to index.html before uploading, same steps as before.
+
+
+0xa7
+Code · HTML 
+
+
+
+
+
+Claude is AI and can make mistakes. Please double-check responses.
+0xa7 · HTML
+Copy
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anime Oracle</title>
+  <title>0xA7 — Anime</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -15,32 +256,31 @@
       --red: #e74c3c; --purple: #8e44ad; --blue: #2980b9;
     }
     body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
-
     .accent-line { height: 2px; background: linear-gradient(90deg,#c0392b,#8e44ad,#2980b9,#c0392b); background-size:200%; animation: shimmer 5s linear infinite; }
     @keyframes shimmer { to { background-position: 200%; } }
-
-    .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
-
+    .container { max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+ 
+    /* HEADER */
     .header { text-align: center; margin-bottom: 2.5rem; }
-    .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem,6vw,4rem); letter-spacing:.15em; color:#fff; line-height:1; text-shadow:0 0 60px rgba(142,68,173,.3); }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.8rem,7vw,4.5rem); letter-spacing:.1em; color:#fff; line-height:1; text-shadow:0 0 60px rgba(142,68,173,.4); }
     .logo span { color: var(--red); }
-    .tagline { font-size:.78rem; color:var(--dim); letter-spacing:.14em; text-transform:uppercase; margin-top:.35rem; }
-
+    .tagline { font-size:.75rem; color:var(--dim); letter-spacing:.18em; text-transform:uppercase; margin-top:.4rem; }
+ 
+    /* TABS */
     .tabs { display:flex; background:var(--surface); border-radius:10px; padding:4px; margin-bottom:1.5rem; border:.5px solid var(--border); }
     .tab { flex:1; padding:.65rem; text-align:center; cursor:pointer; border-radius:7px; font-size:.85rem; font-weight:500; color:var(--dim); transition:all .2s; user-select:none; }
     .tab.active { background:var(--surface2); color:var(--text); }
-
     .panel { display:none; }
     .panel.active { display:block; animation: fadeUp .3s ease; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-
+ 
+    /* SEARCH */
     .search-wrap { position:relative; margin-bottom:.75rem; }
-    .search-icon { position:absolute; left:.85rem; top:50%; transform:translateY(-50%); color:var(--dim); pointer-events:none; }
+    .search-icon { position:absolute; left:.85rem; top:50%; transform:translateY(-50%); color:var(--dim); pointer-events:none; font-style:normal; }
     .search-input { width:100%; background:var(--surface); border:.5px solid var(--border); border-radius:9px; padding:.75rem 1rem .75rem 2.5rem; color:var(--text); font-size:.95rem; font-family:'Inter',sans-serif; outline:none; transition:border-color .2s; }
     .search-input:focus { border-color:var(--purple); }
     .search-input::placeholder { color:var(--dimmer); }
-
-    .search-results { background:var(--surface); border:.5px solid var(--border); border-radius:9px; overflow:hidden; margin-bottom:1rem; display:none; }
+    .search-results { background:var(--surface); border:.5px solid var(--border); border-radius:9px; overflow:hidden; margin-bottom:1rem; display:none; max-height:360px; overflow-y:auto; }
     .search-item { display:flex; align-items:center; gap:.75rem; padding:.6rem 1rem; cursor:pointer; border-bottom:.5px solid var(--border2); transition:background .15s; }
     .search-item:last-child { border-bottom:none; }
     .search-item:hover { background:var(--surface2); }
@@ -48,191 +288,228 @@
     .si-title { font-size:.88rem; font-weight:500; color:var(--text); }
     .si-meta { font-size:.73rem; color:var(--dim); margin-top:2px; }
     .si-score { margin-left:auto; font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--red); flex-shrink:0; }
-
+ 
+    /* WATCHED GRID */
     .watched-hint { font-size:.75rem; color:var(--dimmer); text-align:center; margin-bottom:.85rem; }
-    .watched-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:.75rem; }
+    .watched-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(105px,1fr)); gap:.85rem; }
     .watched-card { position:relative; border-radius:8px; overflow:hidden; aspect-ratio:2/3; background:var(--surface); cursor:pointer; transition:transform .2s; }
     .watched-card:hover { transform:translateY(-3px); }
     .watched-card img { width:100%; height:100%; object-fit:cover; display:block; }
-    .wc-title { position:absolute; bottom:0; left:0; right:0; padding:4px 5px; background:linear-gradient(transparent,rgba(0,0,0,.88)); font-size:.6rem; color:var(--text); line-height:1.25; }
-    .wc-remove { position:absolute; top:4px; right:4px; width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,.75); border:none; color:var(--red); font-size:.6rem; cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s; }
+    .wc-title { position:absolute; bottom:0; left:0; right:0; padding:5px 6px; background:linear-gradient(transparent,rgba(0,0,0,.92)); font-size:.62rem; color:var(--text); line-height:1.3; }
+    .wc-remove { position:absolute; top:5px; right:5px; width:22px; height:22px; border-radius:50%; background:rgba(0,0,0,.82); border:none; color:var(--red); font-size:.65rem; cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s; }
     .watched-card:hover .wc-remove { opacity:1; }
-    .empty-state { grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--dimmer); font-size:.85rem; font-style:italic; line-height:1.8; }
-
+    .empty-state { grid-column:1/-1; text-align:center; padding:3rem 1rem; color:var(--dimmer); font-size:.85rem; font-style:italic; line-height:1.9; }
+    .saved-notice { font-size:.72rem; color:#3a6e3a; text-align:center; margin-bottom:.65rem; letter-spacing:.05em; }
+ 
+    /* CHIPS */
     .q-section { margin-bottom:1.25rem; }
     .q-label { font-size:.73rem; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); margin-bottom:.65rem; font-weight:500; }
     .chips { display:flex; flex-wrap:wrap; gap:6px; }
-    .chip { padding:5px 13px; border-radius:20px; border:.5px solid var(--border); background:var(--surface); color:#6a6585; cursor:pointer; font-size:.82rem; transition:all .2s; user-select:none; }
+    .chip { padding:5px 14px; border-radius:20px; border:.5px solid var(--border); background:var(--surface); color:#6a6585; cursor:pointer; font-size:.82rem; transition:all .2s; user-select:none; }
     .chip:hover { border-color:var(--purple); color:#c090e0; }
     .chip.sel-g { background:#1e0e2e; border-color:var(--purple); color:#d4a8f0; }
     .chip.sel-m { background:#0e1e2e; border-color:var(--blue); color:#90c0e8; }
     .chip.sel-l { background:#1e0a0a; border-color:var(--red); color:#e89080; }
-
+ 
     .rec-btn { width:100%; padding:.9rem; background:#1a0a20; border:1px solid var(--purple); border-radius:9px; color:#d4a8f0; font-family:'Bebas Neue',sans-serif; font-size:1.15rem; letter-spacing:.2em; cursor:pointer; transition:all .2s; margin-top:.5rem; }
-    .rec-btn:hover { background:#2a0a35; box-shadow:0 0 24px rgba(142,68,173,.25); }
+    .rec-btn:hover:not(:disabled) { background:#2a0a35; box-shadow:0 0 24px rgba(142,68,173,.25); }
     .rec-btn:disabled { opacity:.4; cursor:not-allowed; }
-
-    .results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:1rem; margin-top:1.5rem; }
+ 
+    /* RESULTS */
+    .results-section { margin-top:1.75rem; }
+    .results-heading { font-family:'Bebas Neue',sans-serif; font-size:.85rem; letter-spacing:.18em; color:var(--dim); margin-bottom:.85rem; padding-bottom:.5rem; border-bottom:.5px solid var(--border2); }
+    .results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:1rem; }
     .anime-poster { cursor:pointer; border-radius:8px; overflow:hidden; background:var(--surface); transition:transform .2s, box-shadow .2s; }
     .anime-poster:hover { transform:translateY(-5px); box-shadow:0 10px 28px rgba(0,0,0,.6); }
-    .anime-poster img { width:100%; aspect-ratio:2/3; object-fit:cover; display:block; }
+    .anime-poster img { width:100%; aspect-ratio:2/3; object-fit:cover; display:block; background:var(--surface2); }
     .poster-info { padding:.5rem .65rem .65rem; }
     .poster-title { font-size:.77rem; font-weight:500; color:var(--text); line-height:1.35; margin-bottom:3px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
     .poster-score { font-family:'Bebas Neue',sans-serif; font-size:1rem; color:var(--red); }
     .poster-score span { font-family:'Inter',sans-serif; font-size:.65rem; color:var(--dim); margin-left:2px; }
-
-    .loading-state { text-align:center; padding:2.5rem; color:var(--dim); font-style:italic; font-size:.85rem; }
+ 
+    .loading-state { text-align:center; padding:2.5rem; color:var(--dim); font-style:italic; font-size:.85rem; line-height:2.2; }
     .dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:var(--purple); margin:0 3px; animation:blink 1s infinite; }
     .dot:nth-child(2) { animation-delay:.2s; background:var(--red); }
     .dot:nth-child(3) { animation-delay:.4s; background:var(--blue); }
     @keyframes blink { 0%,100%{opacity:.2;transform:scale(.8)} 50%{opacity:1;transform:scale(1.2)} }
     .err { color:var(--red); text-align:center; padding:1rem; font-size:.85rem; font-style:italic; }
-
+ 
     /* MODAL */
     .overlay { position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:1000; display:flex; align-items:flex-start; justify-content:center; overflow-y:auto; padding:2rem 1rem; opacity:0; pointer-events:none; transition:opacity .25s; }
     .overlay.open { opacity:1; pointer-events:all; }
-    .modal { background:var(--surface); border:.5px solid var(--border); border-radius:14px; width:100%; max-width:720px; overflow:hidden; transform:translateY(20px); transition:transform .25s; }
+    .modal { background:var(--surface); border:.5px solid var(--border); border-radius:14px; width:100%; max-width:740px; overflow:hidden; transform:translateY(20px); transition:transform .25s; margin-bottom:2rem; }
     .overlay.open .modal { transform:none; }
-
     .modal-hero { display:flex; gap:1.25rem; padding:1.5rem; border-bottom:.5px solid var(--border2); }
-    .modal-poster { width:120px; min-width:120px; aspect-ratio:2/3; object-fit:cover; border-radius:8px; }
-    .modal-info h2 { font-family:'Bebas Neue',sans-serif; font-size:1.65rem; letter-spacing:.05em; color:#fff; line-height:1.1; margin-bottom:.3rem; }
+    .modal-poster { width:130px; min-width:130px; aspect-ratio:2/3; object-fit:cover; border-radius:8px; background:var(--surface2); }
+    .modal-info { flex:1; min-width:0; }
+    .modal-info h2 { font-family:'Bebas Neue',sans-serif; font-size:1.7rem; letter-spacing:.05em; color:#fff; line-height:1.1; margin-bottom:.3rem; }
     .modal-jp { font-size:.8rem; color:var(--dim); margin-bottom:.65rem; }
     .stat-row { display:flex; flex-wrap:wrap; gap:.45rem; margin-bottom:.65rem; }
     .badge { padding:3px 10px; border-radius:6px; font-size:.75rem; font-weight:500; }
-    .b-score { background:#1e0a0a; color:var(--red); border:.5px solid #7a1a1a; }
-    .b-eps { background:#0e1020; color:#7090d0; border:.5px solid #2a3a6e; }
-    .b-status { background:#0e200e; color:#70c070; border:.5px solid #2a5e2a; }
-    .b-year { background:#1e1a0a; color:#c0a040; border:.5px solid #5e4a1a; }
-    .b-rank { background:#1a1020; color:#a080c0; border:.5px solid #4a2a6a; }
+    .b-score  { background:#1e0a0a; color:var(--red);  border:.5px solid #7a1a1a; }
+    .b-eps    { background:#0e1020; color:#7090d0;      border:.5px solid #2a3a6e; }
+    .b-status { background:#0e200e; color:#70c070;      border:.5px solid #2a5e2a; }
+    .b-year   { background:#1e1a0a; color:#c0a040;      border:.5px solid #5e4a1a; }
+    .b-rank   { background:#1a1020; color:#a080c0;      border:.5px solid #4a2a6a; }
+    .b-pop    { background:#0e1e20; color:#60b0b0;      border:.5px solid #1a4e50; }
     .genre-tags { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:.7rem; }
     .gtag { padding:3px 9px; border-radius:12px; background:var(--surface2); border:.5px solid var(--border); font-size:.72rem; color:#8080a0; }
-    .synopsis { font-size:.85rem; color:var(--muted); line-height:1.68; max-height:90px; overflow-y:auto; padding-right:4px; }
-
+    .synopsis { font-size:.85rem; color:var(--muted); line-height:1.68; max-height:100px; overflow-y:auto; padding-right:4px; }
     .modal-section { padding:1.1rem 1.5rem; border-bottom:.5px solid var(--border2); }
-    .modal-section:last-of-type { border-bottom:none; }
     .section-title { font-family:'Bebas Neue',sans-serif; letter-spacing:.12em; font-size:.85rem; color:var(--dim); margin-bottom:.75rem; }
     .similar-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:.75rem; }
     .sim-card { cursor:pointer; border-radius:7px; overflow:hidden; background:var(--surface2); transition:transform .15s; }
     .sim-card:hover { transform:translateY(-3px); }
-    .sim-card img { width:100%; aspect-ratio:2/3; object-fit:cover; display:block; }
-    .sim-title { padding:4px 6px; font-size:.65rem; color:#a090b8; line-height:1.25; }
-
-    .modal-close { display:block; width:calc(100% - 3rem); margin:1rem 1.5rem; padding:.7rem; background:transparent; border:.5px solid var(--border); border-radius:8px; color:var(--dim); cursor:pointer; font-size:.85rem; transition:all .2s; font-family:'Inter',sans-serif; }
+    .sim-card img { width:100%; aspect-ratio:2/3; object-fit:cover; display:block; background:var(--border); }
+    .sim-title { padding:5px 6px; font-size:.65rem; color:#a090b8; line-height:1.3; }
+    .modal-actions { display:flex; gap:.75rem; padding:1rem 1.5rem; }
+    .modal-fav-btn { flex:1; padding:.65rem; background:transparent; border:.5px solid var(--border); border-radius:8px; color:var(--dim); cursor:pointer; font-size:.82rem; transition:all .2s; font-family:'Inter',sans-serif; }
+    .modal-fav-btn:hover { border-color:#e8a030; color:#e8a030; }
+    .modal-fav-btn.is-fav { background:#1e180a; border-color:#c8901a; color:#e8a030; }
+    .modal-close { flex:1; padding:.65rem; background:transparent; border:.5px solid var(--border); border-radius:8px; color:var(--dim); cursor:pointer; font-size:.82rem; transition:all .2s; font-family:'Inter',sans-serif; }
     .modal-close:hover { border-color:var(--purple); color:#c090e0; }
-
-    @media(max-width:500px) {
+ 
+    /* FAVORITES section in watched tab */
+    .section-divider { font-family:'Bebas Neue',sans-serif; font-size:.8rem; letter-spacing:.18em; color:var(--dim); margin:1.5rem 0 .75rem; padding-bottom:.5rem; border-bottom:.5px solid var(--border2); display:flex; align-items:center; justify-content:space-between; }
+    .clear-btn { font-family:'Inter',sans-serif; font-size:.7rem; color:var(--dimmer); cursor:pointer; background:none; border:none; letter-spacing:0; transition:color .2s; }
+    .clear-btn:hover { color:var(--red); }
+ 
+    @media(max-width:520px) {
       .modal-hero { flex-direction:column; }
       .modal-poster { width:100px; }
       .results-grid { grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); }
+      .watched-grid { grid-template-columns:repeat(auto-fill,minmax(85px,1fr)); }
     }
   </style>
 </head>
 <body>
-
 <div class="accent-line"></div>
-
 <div class="container">
   <div class="header">
-    <div class="logo">Anime <span>Oracle</span></div>
-    <div class="tagline">Powered by MyAnimeList · Find your next obsession</div>
+    <div class="logo">0x<span>A7</span></div>
+    <div class="tagline">Your personal anime finder</div>
   </div>
-
+ 
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('watched')">⊞ My Watched List</div>
-    <div class="tab" onclick="switchTab('rec')">✦ Get Recommendations</div>
+    <div class="tab active" onclick="switchTab('watched')">⊞ &nbsp;My Anime List</div>
+    <div class="tab" onclick="switchTab('rec')">✦ &nbsp;Get Recommendations</div>
   </div>
-
-  <!-- ── WATCHED PANEL ── -->
+ 
+  <!-- WATCHED PANEL -->
   <div class="panel active" id="panel-watched">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input class="search-input" id="watch-search" placeholder="Search anime to add to your watched list..." oninput="debounceSearch(this.value)" autocomplete="off">
+      <input class="search-input" id="watch-search" placeholder="Search and add anime you've watched..." oninput="debounce(this.value)" autocomplete="off">
     </div>
     <div class="search-results" id="watch-results"></div>
-    <div class="watched-hint">Add anime you've loved — they'll shape your recommendations.</div>
-    <div class="watched-grid" id="watched-grid">
-      <div class="empty-state">No anime added yet.<br>Search above and click to add.</div>
+ 
+    <!-- Favorites -->
+    <div id="fav-section" style="display:none">
+      <div class="section-divider">
+        <span>⭐ Favorites</span>
+        <button class="clear-btn" onclick="clearFavorites()">Clear all</button>
+      </div>
+      <div class="watched-hint">Your favorites are saved — they stay even if you close the browser.</div>
+      <div class="watched-grid" id="fav-grid"></div>
+    </div>
+ 
+    <!-- Watched -->
+    <div id="watched-section">
+      <div class="section-divider" id="watched-divider" style="display:none">
+        <span>✓ Watched</span>
+        <button class="clear-btn" onclick="clearWatched()">Clear all</button>
+      </div>
+      <div class="watched-hint" id="watched-main-hint">Add anime you've loved — they power your "Similar" recommendations.</div>
+      <div class="watched-grid" id="watched-grid">
+        <div class="empty-state">Nothing added yet.<br>Search above and click to add.</div>
+      </div>
     </div>
   </div>
-
-  <!-- ── RECOMMENDATIONS PANEL ── -->
+ 
+  <!-- RECOMMENDATIONS PANEL -->
   <div class="panel" id="panel-rec">
     <div class="q-section">
-      <div class="q-label">Genre</div>
+      <div class="q-label">Genre — pick any you like</div>
       <div class="chips" id="genre-chips">
-        <span class="chip" data-v="Action">Action</span>
-        <span class="chip" data-v="Romance">Romance</span>
-        <span class="chip" data-v="Psychological">Psychological</span>
-        <span class="chip" data-v="Fantasy">Fantasy</span>
-        <span class="chip" data-v="Isekai">Isekai</span>
-        <span class="chip" data-v="Sci-Fi">Sci-Fi</span>
-        <span class="chip" data-v="Horror">Horror</span>
-        <span class="chip" data-v="Comedy">Comedy</span>
-        <span class="chip" data-v="Mystery">Mystery</span>
-        <span class="chip" data-v="Sports">Sports</span>
-        <span class="chip" data-v="Slice of Life">Slice of Life</span>
-        <span class="chip" data-v="Mecha">Mecha</span>
-        <span class="chip" data-v="Thriller">Thriller</span>
-        <span class="chip" data-v="Supernatural">Supernatural</span>
+        <span class="chip" data-id="1"  >Action</span>
+        <span class="chip" data-id="2"  >Adventure</span>
+        <span class="chip" data-id="4"  >Comedy</span>
+        <span class="chip" data-id="8"  >Drama</span>
+        <span class="chip" data-id="10" >Fantasy</span>
+        <span class="chip" data-id="14" >Horror</span>
+        <span class="chip" data-id="7"  >Mystery</span>
+        <span class="chip" data-id="22" >Romance</span>
+        <span class="chip" data-id="24" >Sci-Fi</span>
+        <span class="chip" data-id="36" >Slice of Life</span>
+        <span class="chip" data-id="37" >Supernatural</span>
+        <span class="chip" data-id="40" >Psychological</span>
+        <span class="chip" data-id="18" >Mecha</span>
+        <span class="chip" data-id="30" >Sports</span>
+        <span class="chip" data-id="41" >Thriller</span>
       </div>
     </div>
     <div class="q-section">
-      <div class="q-label">Mood</div>
+      <div class="q-label">Rating</div>
       <div class="chips" id="mood-chips">
-        <span class="chip" data-v="epic and hype">Epic & Hype</span>
-        <span class="chip" data-v="emotional and heartfelt">Emotional</span>
-        <span class="chip" data-v="dark and twisted">Dark & Twisted</span>
-        <span class="chip" data-v="relaxing and cozy">Relaxing</span>
-        <span class="chip" data-v="mind-bending and philosophical">Mind-bending</span>
-        <span class="chip" data-v="funny and lighthearted">Funny</span>
-        <span class="chip" data-v="romantic and dreamy">Romantic</span>
-        <span class="chip" data-v="intense and thrilling">Intense</span>
+        <span class="chip" data-min="8.0">Top Rated (8.0+)</span>
+        <span class="chip" data-min="7.0">Well Rated (7.0+)</span>
+        <span class="chip" data-min="0"  >Any Score</span>
       </div>
     </div>
     <div class="q-section">
-      <div class="q-label">Episode Length</div>
+      <div class="q-label">Format</div>
       <div class="chips" id="len-chips">
-        <span class="chip" data-v="short (under 26 episodes)">Short series</span>
-        <span class="chip" data-v="medium (26–100 episodes)">Medium series</span>
-        <span class="chip" data-v="long (100+ episodes)">Long series</span>
-        <span class="chip" data-v="movie or OVA">Movie / OVA</span>
-        <span class="chip" data-v="any length">No preference</span>
+        <span class="chip" data-type="tv"   >TV Series</span>
+        <span class="chip" data-type="movie">Movie</span>
+        <span class="chip" data-type="ova"  >OVA</span>
+        <span class="chip" data-type=""     >Any</span>
       </div>
     </div>
-    <button class="rec-btn" id="rec-btn" onclick="getRecommendations()">▶ Find My Anime</button>
+    <button class="rec-btn" id="rec-btn" onclick="getRecommendations()">▶ &nbsp;Find My Anime</button>
     <div id="rec-status"></div>
-    <div class="results-grid" id="results-grid"></div>
+    <div id="results-area"></div>
   </div>
 </div>
-
-<!-- ── MODAL ── -->
+ 
+<!-- MODAL -->
 <div class="overlay" id="overlay" onclick="closeModalOutside(event)">
   <div class="modal" id="modal">
     <div id="modal-content"></div>
-    <button class="modal-close" onclick="closeModal()">Close</button>
+    <div class="modal-actions">
+      <button class="modal-fav-btn" id="modal-fav-btn" onclick="toggleFavFromModal()">☆ &nbsp;Add to Favorites</button>
+      <button class="modal-close" onclick="closeModal()">✕ &nbsp;Close</button>
+    </div>
   </div>
 </div>
-
+ 
 <script>
-  // ─────────────────────────────────────────
-  //  🔑 YOUR ANTHROPIC API KEY — KEEP PRIVATE
-  // ─────────────────────────────────────────
-  const ANTHROPIC_API_KEY = "YOUR_API_KEY_HERE";
-
   const JIKAN = "https://api.jikan.moe/v4";
-  let watched = [];
+  const LS_WATCHED  = "0xa7_watched";
+  const LS_FAVS     = "0xa7_favorites";
+ 
+  let watched   = JSON.parse(localStorage.getItem(LS_WATCHED)  || "[]");
+  let favorites = JSON.parse(localStorage.getItem(LS_FAVS)     || "[]");
+  let currentModalId = null;
   let searchTimer = null;
-
+ 
+  function save() {
+    localStorage.setItem(LS_WATCHED, JSON.stringify(watched));
+    localStorage.setItem(LS_FAVS,    JSON.stringify(favorites));
+  }
+ 
+  // ── INIT ──
+  renderWatched();
+  renderFavs();
+ 
   // ── TABS ──
   function switchTab(name) {
-    document.querySelectorAll(".tab").forEach((t, i) =>
-      t.classList.toggle("active", (name === "watched" && i === 0) || (name === "rec" && i === 1))
+    document.querySelectorAll(".tab").forEach((t,i) =>
+      t.classList.toggle("active",(name==="watched"&&i===0)||(name==="rec"&&i===1))
     );
-    document.getElementById("panel-watched").classList.toggle("active", name === "watched");
-    document.getElementById("panel-rec").classList.toggle("active", name === "rec");
+    document.getElementById("panel-watched").classList.toggle("active", name==="watched");
+    document.getElementById("panel-rec").classList.toggle("active", name==="rec");
   }
-
+ 
   // ── CHIPS ──
   document.querySelectorAll("#genre-chips .chip").forEach(c =>
     c.addEventListener("click", () => c.classList.toggle("sel-g"))
@@ -249,226 +526,306 @@
       c.classList.add("sel-l");
     })
   );
-
-  function getChips(id, cls) {
-    return [...document.querySelectorAll(`#${id} .chip.${cls}`)].map(c => c.dataset.v);
-  }
-
+ 
   // ── SEARCH ──
-  function debounceSearch(q) {
+  function debounce(q) {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => searchAnime(q), 400);
+    searchTimer = setTimeout(() => searchMAL(q), 420);
   }
-
-  async function searchAnime(q) {
+ 
+  async function searchMAL(q) {
     const el = document.getElementById("watch-results");
-    if (!q || q.length < 2) { el.style.display = "none"; return; }
+    if (!q || q.length < 2) { el.style.display="none"; return; }
     el.style.display = "block";
-    el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">Searching...</div>`;
+    el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">Searching MyAnimeList...</div>`;
     try {
-      const r = await fetch(`${JIKAN}/anime?q=${encodeURIComponent(q)}&limit=6&sfw=true`);
+      const r = await fetch(`${JIKAN}/anime?q=${encodeURIComponent(q)}&limit=7&sfw=true`);
       const d = await r.json();
-      if (!d.data || !d.data.length) {
-        el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">No results found.</div>`;
-        return;
-      }
-      el.innerHTML = d.data.map(a => `
+      if (!d.data?.length) { el.innerHTML=`<div style="padding:.75rem 1rem;color:var(--dim);font-size:.82rem">No results found.</div>`; return; }
+      el.innerHTML = d.data.map(a=>`
         <div class="search-item" onclick="addWatched(${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">
-          <img src="${a.images?.jpg?.image_url || ''}" alt="" onerror="this.style.opacity=0">
-          <div>
+          <img src="${a.images?.jpg?.image_url||''}" alt="" onerror="this.style.opacity=0">
+          <div style="min-width:0">
             <div class="si-title">${a.title}</div>
-            <div class="si-meta">${a.type || "?"} · ${a.episodes || "?"} eps · ${a.aired?.prop?.from?.year || "?"}</div>
+            <div class="si-meta">${a.type||"?"} &nbsp;·&nbsp; ${a.episodes||"?"} eps &nbsp;·&nbsp; ${a.aired?.prop?.from?.year||"?"}</div>
           </div>
-          <div class="si-score">${a.score || "—"}</div>
+          <div class="si-score">${a.score||"—"}</div>
         </div>`).join("");
-    } catch {
-      el.innerHTML = `<div style="padding:.75rem 1rem;color:var(--red);font-size:.82rem">Search failed. Try again.</div>`;
-    }
+    } catch { el.innerHTML=`<div style="padding:.75rem 1rem;color:var(--red);font-size:.82rem">Search failed. Try again.</div>`; }
   }
-
-  function esc(s) { return (s || "").replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
-
+ 
+  function esc(s) { return (s||"").replace(/'/g,"\\'").replace(/"/g,"&quot;"); }
+ 
   function addWatched(id, title, img) {
-    if (watched.find(w => w.id === id)) { hideSearch(); return; }
+    if (watched.find(w=>w.id===id) || favorites.find(f=>f.id===id)) { hideSearch(); return; }
     watched.push({ id, title, img });
-    renderWatched();
-    hideSearch();
+    save(); renderWatched(); hideSearch();
     document.getElementById("watch-search").value = "";
   }
-
+ 
   function hideSearch() {
     const el = document.getElementById("watch-results");
-    el.style.display = "none";
-    el.innerHTML = "";
+    el.style.display="none"; el.innerHTML="";
   }
-
+ 
   function removeWatched(id) {
-    watched = watched.filter(w => w.id !== id);
-    renderWatched();
+    watched = watched.filter(w=>w.id!==id);
+    save(); renderWatched();
   }
-
+ 
   function renderWatched() {
-    const grid = document.getElementById("watched-grid");
+    const g = document.getElementById("watched-grid");
+    const divider = document.getElementById("watched-divider");
+    const hint = document.getElementById("watched-main-hint");
+ 
     if (!watched.length) {
-      grid.innerHTML = `<div class="empty-state">No anime added yet.<br>Search above and click to add.</div>`;
+      divider.style.display = "none";
+      hint.style.display = "block";
+      g.innerHTML = favorites.length
+        ? `<div class="empty-state" style="padding:1.5rem">No watched anime yet.<br>Search above to add.</div>`
+        : `<div class="empty-state">Nothing added yet.<br>Search above and click to add.</div>`;
       return;
     }
-    grid.innerHTML = watched.map(w => `
+    divider.style.display = "flex";
+    hint.style.display = "none";
+    g.innerHTML = watched.map(w=>`
       <div class="watched-card" onclick="openModal(${w.id})">
         <img src="${w.img}" alt="${w.title}" onerror="this.style.opacity=0">
         <button class="wc-remove" onclick="event.stopPropagation();removeWatched(${w.id})">✕</button>
         <div class="wc-title">${w.title}</div>
       </div>`).join("");
   }
-
-  // ── RECOMMENDATIONS ──
+ 
+  function clearWatched() {
+    if (!confirm("Clear your entire watched list?")) return;
+    watched = []; save(); renderWatched();
+  }
+ 
+  // ── FAVORITES ──
+  function renderFavs() {
+    const sec = document.getElementById("fav-section");
+    const g   = document.getElementById("fav-grid");
+    if (!favorites.length) { sec.style.display="none"; return; }
+    sec.style.display = "block";
+    g.innerHTML = favorites.map(f=>`
+      <div class="watched-card" onclick="openModal(${f.id})">
+        <img src="${f.img}" alt="${f.title}" onerror="this.style.opacity=0">
+        <button class="wc-remove" onclick="event.stopPropagation();removeFav(${f.id})">✕</button>
+        <div class="wc-title">⭐ ${f.title}</div>
+      </div>`).join("");
+  }
+ 
+  function removeFav(id) {
+    favorites = favorites.filter(f=>f.id!==id);
+    save(); renderFavs();
+  }
+ 
+  function clearFavorites() {
+    if (!confirm("Clear all favorites?")) return;
+    favorites = []; save(); renderFavs();
+  }
+ 
+  function isFav(id) { return !!favorites.find(f=>f.id===id); }
+ 
+  function toggleFavFromModal() {
+    if (!currentModalId) return;
+    const id = currentModalId;
+    if (isFav(id)) {
+      favorites = favorites.filter(f=>f.id!==id);
+    } else {
+      // Get data from watched or fetch from page
+      const existing = watched.find(w=>w.id===id);
+      const img = document.querySelector(".modal-poster")?.src || "";
+      const title = document.querySelector(".modal-info h2")?.textContent || "";
+      if (!favorites.find(f=>f.id===id)) {
+        favorites.push({ id, title, img });
+        // Also add to watched if not already there
+        if (!watched.find(w=>w.id===id)) {
+          watched.push({ id, title, img });
+          renderWatched();
+        }
+      }
+    }
+    save(); renderFavs(); updateFavBtn(id);
+  }
+ 
+  function updateFavBtn(id) {
+    const btn = document.getElementById("modal-fav-btn");
+    if (!btn) return;
+    if (isFav(id)) {
+      btn.textContent = "⭐ In Favorites";
+      btn.classList.add("is-fav");
+    } else {
+      btn.textContent = "☆ Add to Favorites";
+      btn.classList.remove("is-fav");
+    }
+  }
+ 
+  // ── RECOMMENDATIONS (pure Jikan, no AI) ──
+  const delay = ms => new Promise(r => setTimeout(r, ms));
+ 
   async function getRecommendations() {
-    const genres = getChips("genre-chips", "sel-g");
-    const mood = getChips("mood-chips", "sel-m")[0] || "";
-    const len = getChips("len-chips", "sel-l")[0] || "any length";
-    const watchedTitles = watched.map(w => w.title);
-
-    const btn = document.getElementById("rec-btn");
+    const genreIds  = [...document.querySelectorAll("#genre-chips .chip.sel-g")].map(c=>c.dataset.id).join(",");
+    const moodChip  = document.querySelector("#mood-chips .chip.sel-m");
+    const lenChip   = document.querySelector("#len-chips .chip.sel-l");
+    const minScore  = moodChip ? parseFloat(moodChip.dataset.min) : 0;
+    const mediaType = lenChip  ? lenChip.dataset.type : "";
+ 
+    const btn    = document.getElementById("rec-btn");
     const status = document.getElementById("rec-status");
-    const grid = document.getElementById("results-grid");
-
-    btn.disabled = true;
-    grid.innerHTML = "";
-    status.innerHTML = `<div class="loading-state"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br><br>Consulting the oracle...</div>`;
-
-    const parts = [];
-    if (watchedTitles.length) parts.push(`Watched and loved: ${watchedTitles.join(", ")}`);
-    if (genres.length) parts.push(`Genres: ${genres.join(", ")}`);
-    if (mood) parts.push(`Mood: ${mood}`);
-    parts.push(`Length preference: ${len}`);
-
-    const prompt = `You are an expert anime recommender. Based on these user preferences: ${parts.join(" | ")}, recommend exactly 8 anime.
-Respond ONLY with a valid JSON array, no markdown, no extra text:
-[{"title":"exact English title on MyAnimeList","year":"2021"}]
-Use the exact MyAnimeList English title so results can be found via search.`;
-
+    const area   = document.getElementById("results-area");
+ 
+    btn.disabled = true; area.innerHTML = "";
+    status.innerHTML = `<div class="loading-state"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br>Fetching from MyAnimeList...</div>`;
+ 
     try {
-      const aiRes = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": ANTHROPIC_API_KEY,
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true"
-        },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 600,
-          messages: [{ role: "user", content: prompt }]
-        })
+      // All sources to pull from (watched + favorites)
+      const allSources = [...new Map([...watched,...favorites].map(x=>[x.id,x])).values()];
+ 
+      // 1. Pull similar from watched + favorites
+      const simIds   = new Set();
+      const simAnime = [];
+      if (allSources.length) {
+        const fetches = await Promise.allSettled(
+          allSources.slice(0,6).map(async (w,i) => {
+            await delay(i * 380);
+            const r = await fetch(`${JIKAN}/anime/${w.id}/recommendations`);
+            const d = await r.json();
+            return (d.data||[]).slice(0,10).map(x=>x.entry);
+          })
+        );
+        fetches.forEach(r => {
+          if (r.status==="fulfilled") r.value.forEach(a => {
+            if (!simIds.has(a.mal_id)) { simIds.add(a.mal_id); simAnime.push(a); }
+          });
+        });
+      }
+ 
+      // 2. Pull by genre / filter
+      await delay(300);
+      let params = `order_by=score&sort=desc&limit=20&sfw=true`;
+      if (genreIds)  params += `&genres=${genreIds}`;
+      if (mediaType) params += `&type=${mediaType}`;
+      if (minScore)  params += `&min_score=${minScore}`;
+      const gr = await fetch(`${JIKAN}/anime?${params}`);
+      const gd = await gr.json();
+      const genreAnime = gd.data || [];
+ 
+      // 3. Deduplicate — exclude things already watched/favorited
+      const excludeIds = new Set(allSources.map(w=>w.id));
+      const seen = new Set();
+      const dedupe = list => list.filter(a => {
+        if (seen.has(a.mal_id) || excludeIds.has(a.mal_id)) return false;
+        seen.add(a.mal_id); return true;
       });
-
-      const aiData = await aiRes.json();
-
-      if (aiData.error) throw new Error(aiData.error.message);
-
-      const raw = aiData.content.map(i => i.text || "").join("");
-      const clean = raw.replace(/```json|```/g, "").trim();
-      const recs = JSON.parse(clean);
-
-      // Fetch MAL data for each recommendation
-      const results = await Promise.allSettled(recs.map(async (r, i) => {
-        await new Promise(res => setTimeout(res, i * 200)); // rate limit spacing
-        const s = await fetch(`${JIKAN}/anime?q=${encodeURIComponent(r.title)}&limit=1&sfw=true`);
-        const sd = await s.json();
-        return sd.data?.[0] || null;
-      }));
-
-      const animes = results
-        .filter(r => r.status === "fulfilled" && r.value)
-        .map(r => r.value);
-
-      status.innerHTML = "";
-      btn.disabled = false;
-
-      if (!animes.length) {
-        status.innerHTML = `<div class="err">No results found. Try different preferences.</div>`;
+ 
+      const filteredSim   = dedupe(simAnime)
+        .filter(a => !minScore || (a.score && a.score >= minScore))
+        .sort((a,b) => (b.score||0) - (a.score||0))
+        .slice(0, 16);
+      const filteredGenre = dedupe(genreAnime);
+ 
+      status.innerHTML = ""; btn.disabled = false;
+ 
+      if (!filteredSim.length && !filteredGenre.length) {
+        status.innerHTML = `<div class="err">No results found. Try removing filters or add anime to your list.</div>`;
         return;
       }
-
-      grid.innerHTML = animes.map(a => `
-        <div class="anime-poster" onclick="openModal(${a.mal_id})">
-          <img src="${a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || ''}" alt="${a.title}" loading="lazy" onerror="this.style.minHeight='140px'">
-          <div class="poster-info">
-            <div class="poster-title">${a.title}</div>
-            <div class="poster-score">${a.score || "—"}<span>/ 10</span></div>
-          </div>
-        </div>`).join("");
-
-    } catch (e) {
-      status.innerHTML = `<div class="err">Something went wrong: ${e.message}. Check your API key and try again.</div>`;
+ 
+      let html = "";
+      if (filteredSim.length) html += `
+        <div class="results-section">
+          <div class="results-heading">Similar to your list — ${filteredSim.length} picks</div>
+          <div class="results-grid">${filteredSim.map(posterCard).join("")}</div>
+        </div>`;
+      if (filteredGenre.length) html += `
+        <div class="results-section" style="margin-top:2rem">
+          <div class="results-heading">Top picks by your filters — ${filteredGenre.length} picks</div>
+          <div class="results-grid">${filteredGenre.map(posterCard).join("")}</div>
+        </div>`;
+ 
+      area.innerHTML = html;
+    } catch(e) {
+      status.innerHTML = `<div class="err">Something went wrong. Please try again.</div>`;
       btn.disabled = false;
     }
   }
-
+ 
+  function posterCard(a) {
+    return `
+      <div class="anime-poster" onclick="openModal(${a.mal_id})">
+        <img src="${a.images?.jpg?.large_image_url||a.images?.jpg?.image_url||''}" alt="${esc(a.title)}" loading="lazy">
+        <div class="poster-info">
+          <div class="poster-title">${a.title}</div>
+          <div class="poster-score">${a.score||"—"}<span>/ 10</span></div>
+        </div>
+      </div>`;
+  }
+ 
   // ── MODAL ──
   async function openModal(malId) {
+    currentModalId = malId;
     const overlay = document.getElementById("overlay");
     const content = document.getElementById("modal-content");
     overlay.classList.add("open");
     document.body.style.overflow = "hidden";
-    content.innerHTML = `<div class="loading-state" style="padding:3rem"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br><br>Loading details...</div>`;
-
+    updateFavBtn(malId);
+    content.innerHTML = `<div class="loading-state" style="padding:3rem"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br>Loading from MyAnimeList...</div>`;
     try {
-      const [animeRes, recRes] = await Promise.all([
+      const [ar, rr] = await Promise.all([
         fetch(`${JIKAN}/anime/${malId}/full`),
         fetch(`${JIKAN}/anime/${malId}/recommendations`)
       ]);
-      const animeData = await animeRes.json();
-      const recData = await recRes.json();
-      const a = animeData.data;
-      const similar = (recData.data || []).slice(0, 8);
-
-      const genres = (a.genres || []).map(g => `<span class="gtag">${g.name}</span>`).join("");
-      const simCards = similar.map(s => `
+      const a       = (await ar.json()).data;
+      const similar = ((await rr.json()).data||[]).slice(0,8);
+      currentModalId = malId;
+      updateFavBtn(malId);
+ 
+      const studios  = (a.studios||[]).map(s=>s.name).join(", ")||"—";
+      const genres   = (a.genres||[]).map(g=>`<span class="gtag">${g.name}</span>`).join("");
+      const simCards = similar.map(s=>`
         <div class="sim-card" onclick="closeModal();setTimeout(()=>openModal(${s.entry.mal_id}),300)">
-          <img src="${s.entry.images?.jpg?.image_url || ''}" alt="${s.entry.title}" loading="lazy">
+          <img src="${s.entry.images?.jpg?.image_url||''}" alt="${esc(s.entry.title)}" loading="lazy">
           <div class="sim-title">${s.entry.title}</div>
         </div>`).join("");
-
+ 
       content.innerHTML = `
         <div class="modal-hero">
-          <img class="modal-poster" src="${a.images?.jpg?.large_image_url || ''}" alt="${a.title}" onerror="this.style.display='none'">
+          <img class="modal-poster" src="${a.images?.jpg?.large_image_url||''}" alt="${a.title}" onerror="this.style.display='none'">
           <div class="modal-info">
             <h2>${a.title}</h2>
-            <div class="modal-jp">${a.title_japanese || ""}</div>
+            <div class="modal-jp">${a.title_japanese||""}</div>
             <div class="stat-row">
-              <span class="badge b-score">★ ${a.score || "N/A"}</span>
-              <span class="badge b-eps">${a.episodes || "?"} eps</span>
-              <span class="badge b-status">${a.status || "?"}</span>
-              <span class="badge b-year">${a.aired?.prop?.from?.year || "?"}</span>
-              ${a.rank ? `<span class="badge b-rank">#${a.rank} Ranked</span>` : ""}
+              ${a.score       ?`<span class="badge b-score">★ ${a.score}</span>`:""}
+              ${a.episodes    ?`<span class="badge b-eps">${a.episodes} eps</span>`:""}
+              ${a.status      ?`<span class="badge b-status">${a.status}</span>`:""}
+              ${a.aired?.prop?.from?.year?`<span class="badge b-year">${a.aired.prop.from.year}</span>`:""}
+              ${a.rank        ?`<span class="badge b-rank">#${a.rank} Ranked</span>`:""}
+              ${a.popularity  ?`<span class="badge b-pop">#${a.popularity} Popular</span>`:""}
             </div>
             <div class="genre-tags">${genres}</div>
-            <div class="synopsis">${a.synopsis || "No synopsis available."}</div>
+            <div style="font-size:.75rem;color:var(--dim);margin-bottom:.65rem">Studio: ${studios}</div>
+            <div class="synopsis">${a.synopsis||"No synopsis available."}</div>
           </div>
         </div>
-        ${similar.length ? `
+        ${similar.length?`
         <div class="modal-section">
-          <div class="section-title">Similar Anime</div>
+          <div class="section-title">Similar Anime from MAL</div>
           <div class="similar-grid">${simCards}</div>
-        </div>` : ""}`;
-
+        </div>`:""}`;
     } catch {
-      content.innerHTML = `<div class="err" style="padding:2rem">Failed to load details. Please try again.</div>`;
+      content.innerHTML=`<div class="err" style="padding:2rem">Failed to load details. Try again.</div>`;
     }
   }
-
+ 
   function closeModal() {
     document.getElementById("overlay").classList.remove("open");
     document.body.style.overflow = "";
+    currentModalId = null;
   }
-
-  function closeModalOutside(e) {
-    if (e.target === document.getElementById("overlay")) closeModal();
-  }
-
-  document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+  function closeModalOutside(e) { if(e.target===document.getElementById("overlay"))closeModal(); }
+  document.addEventListener("keydown", e => { if(e.key==="Escape")closeModal(); });
 </script>
 </body>
 </html>
+ 
