@@ -191,6 +191,19 @@
     .modal-btn.active-fav  { background:#1e180a; border-color:var(--gold); color:var(--gold); }
     .modal-btn.active-want { background:#0e1e0e; border-color:#27ae60; color:#70c070; }
 
+    /* SORT DROPDOWN */
+    .sort-select { background:var(--surface); border:.5px solid var(--border); border-radius:7px; color:var(--text); font-size:.8rem; font-family:'Inter',sans-serif; padding:.4rem .7rem; outline:none; cursor:pointer; transition:border-color .2s; }
+    .sort-select:hover, .sort-select:focus { border-color:var(--purple); }
+    .sort-select option { background:var(--surface2); }
+
+    /* FOR YOU PANEL */
+    .fy-intro { text-align:center; padding:1.5rem 1rem .5rem; }
+    .fy-icon { font-size:2rem; margin-bottom:.5rem; }
+    .fy-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:.1em; color:#fff; }
+    .fy-sub { font-size:.82rem; color:var(--dim); margin-top:.35rem; line-height:1.7; }
+    .chip.sel-fy-mood { background:#0e1e2e; border-color:var(--blue); color:#90c0e8; }
+    .chip.sel-fy-len  { background:#1e0a0a; border-color:var(--red); color:#e89080; }
+
     @media(max-width:520px) {
       .modal-hero { flex-direction:column; }
       .modal-poster { width:100px; }
@@ -209,7 +222,8 @@
 
   <div class="tabs">
     <div class="tab active" onclick="switchTab('list')">⊞ &nbsp;My List</div>
-    <div class="tab" onclick="switchTab('rec')">✦ &nbsp;Recommendations</div>
+    <div class="tab" onclick="switchTab('rec')">🔍 &nbsp;Search</div>
+    <div class="tab" onclick="switchTab('foryou')">✦ &nbsp;For You</div>
   </div>
 
   <!-- MY LIST PANEL -->
@@ -243,32 +257,53 @@
     </div>
   </div>
 
-  <!-- RECOMMENDATIONS PANEL -->
+  <!-- SEARCH PANEL -->
   <div class="panel" id="panel-rec">
+    <!-- Search bar -->
     <div class="q-section">
-      <div class="q-label">Search a specific anime</div>
+      <div class="q-label">Search anime</div>
       <div class="search-wrap" style="margin-bottom:.65rem">
         <span class="search-icon">🔍</span>
         <input class="search-input" id="rec-search" placeholder="Search by title on MyAnimeList..." oninput="debounceRecSearch(this.value)" autocomplete="off">
       </div>
-      <!-- Sort & filter bar — shown only when search has results -->
-      <div id="rec-filter-bar" style="display:none;margin-bottom:.75rem">
-        <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center">
-          <span style="font-size:.72rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-right:.25rem">Sort</span>
-          <button class="filter-btn active" data-sort="relevance"   onclick="setSort(this,'relevance')">Relevance</button>
-          <button class="filter-btn"        data-sort="score"       onclick="setSort(this,'score')">★ Rating</button>
-          <button class="filter-btn"        data-sort="rank"        onclick="setSort(this,'rank')">🏆 Rank</button>
-          <button class="filter-btn"        data-sort="title"       onclick="setSort(this,'title')">A–Z</button>
-          <button class="filter-btn"        data-sort="year_desc"   onclick="setSort(this,'year_desc')">Newest</button>
-          <button class="filter-btn"        data-sort="year_asc"    onclick="setSort(this,'year_asc')">Oldest</button>
-          <button class="filter-btn"        data-sort="popularity"  onclick="setSort(this,'popularity')">🔥 Popular</button>
-          <button class="filter-btn"        data-sort="members"     onclick="setSort(this,'members')">👥 Members</button>
+      <div id="rec-filter-bar" style="display:none;margin-bottom:.5rem">
+        <div style="display:flex;align-items:center;gap:.65rem">
+          <span style="font-size:.72rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap">Sort by</span>
+          <select class="sort-select" id="search-sort-select" onchange="setSort(this.value)">
+            <option value="relevance">Relevance</option>
+            <option value="score">★ Rating</option>
+            <option value="rank">🏆 Rank</option>
+            <option value="title">A – Z</option>
+            <option value="year_desc">Newest First</option>
+            <option value="year_asc">Oldest First</option>
+            <option value="popularity">🔥 Popularity</option>
+            <option value="members">👥 Members</option>
+          </select>
         </div>
       </div>
       <div id="rec-results"></div>
     </div>
+
+    <!-- Sort dropdown above tags -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem;flex-wrap:wrap;gap:.5rem">
+      <span style="font-size:.73rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);font-weight:500">Browse by Tags</span>
+      <div style="display:flex;align-items:center;gap:.65rem">
+        <span style="font-size:.72rem;color:var(--dim);white-space:nowrap">Sort by</span>
+        <select class="sort-select" id="rec-sort-select" onchange="setRecSort(this.value)">
+          <option value="score">★ Rating</option>
+          <option value="rank">🏆 Rank</option>
+          <option value="title">A – Z</option>
+          <option value="year_desc">Newest First</option>
+          <option value="year_asc">Oldest First</option>
+          <option value="popularity">🔥 Popularity</option>
+          <option value="members">👥 Members</option>
+        </select>
+        <button class="rec-btn" style="width:auto;padding:.45rem .85rem;margin-top:0;border-color:var(--dim);color:var(--dim);font-size:.8rem;border-radius:7px" title="Reset filters" onclick="resetTags()">↺ Reset</button>
+      </div>
+    </div>
+
     <div class="q-section">
-      <div class="q-label">Genre — pick any you like</div>
+      <div class="q-label">Genre</div>
       <div class="chips" id="genre-chips">
         <span class="chip" data-id="1"  >Action</span>
         <span class="chip" data-id="2"  >Adventure</span>
@@ -288,7 +323,7 @@
       </div>
     </div>
     <div class="q-section">
-      <div class="q-label">Rating</div>
+      <div class="q-label">Min Rating</div>
       <div class="chips" id="mood-chips">
         <span class="chip" data-min="8.0">Top Rated (8.0+)</span>
         <span class="chip" data-min="7.0">Well Rated (7.0+)</span>
@@ -304,24 +339,64 @@
         <span class="chip" data-type=""     >Any</span>
       </div>
     </div>
-    <div style="display:flex;gap:.65rem;margin-top:.5rem">
-      <button class="rec-btn" id="rec-btn" style="flex:1;margin-top:0" onclick="getRecommendations()">▶ &nbsp;Find My Anime</button>
-      <button class="rec-btn" style="width:auto;padding:.9rem 1.1rem;margin-top:0;border-color:var(--dim);color:var(--dim);font-size:.9rem" title="Reset all filters" onclick="resetTags()">↺</button>
-    </div>
+    <button class="rec-btn" id="rec-btn" onclick="getRecommendations()">▶ &nbsp;Find My Anime</button>
     <div id="rec-status"></div>
     <div id="results-area"></div>
-    <!-- sort bar shown after results load -->
-    <div id="rec-sort-bar" style="display:none;margin-top:1rem">
-      <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:.85rem">
-        <span style="font-size:.72rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-right:.25rem">Sort</span>
-        <button class="filter-btn active" data-rs="score"      onclick="setRecSort(this,'score')">★ Rating</button>
-        <button class="filter-btn"        data-rs="rank"       onclick="setRecSort(this,'rank')">🏆 Rank</button>
-        <button class="filter-btn"        data-rs="title"      onclick="setRecSort(this,'title')">A–Z</button>
-        <button class="filter-btn"        data-rs="year_desc"  onclick="setRecSort(this,'year_desc')">Newest</button>
-        <button class="filter-btn"        data-rs="year_asc"   onclick="setRecSort(this,'year_asc')">Oldest</button>
-        <button class="filter-btn"        data-rs="popularity" onclick="setRecSort(this,'popularity')">🔥 Popular</button>
-        <button class="filter-btn"        data-rs="members"    onclick="setRecSort(this,'members')">👥 Members</button>
+  </div>
+
+  <!-- FOR YOU PANEL -->
+  <div class="panel" id="panel-foryou">
+    <div id="fy-content">
+      <div class="fy-intro">
+        <div class="fy-icon">✦</div>
+        <div class="fy-title">For You</div>
+        <div class="fy-sub">Tell me anime you've loved and I'll find ones you'll love too.<br>Your loved list is saved for next time.</div>
       </div>
+
+      <!-- Loved anime input -->
+      <div class="q-section" style="margin-top:1.5rem">
+        <div class="section-divider" style="margin-bottom:.85rem">
+          <span>❤️ Anime I've Loved <span class="section-count" id="loved-count"></span></span>
+          <button class="clear-btn" onclick="clearLoved()">Clear all</button>
+        </div>
+        <div class="search-wrap" style="margin-bottom:.65rem">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="loved-search" placeholder="Search anime you've loved..." oninput="debounceLoved(this.value)" autocomplete="off">
+        </div>
+        <div class="search-results" id="loved-results"></div>
+        <div class="card-grid" id="loved-grid">
+          <div class="empty-state">Add anime you've loved above.<br>The more you add, the better the recommendations.</div>
+        </div>
+      </div>
+
+      <!-- Questions before recommending -->
+      <div class="q-section">
+        <div class="q-label">What are you in the mood for?</div>
+        <div class="chips" id="fy-mood-chips">
+          <span class="chip" data-v="any">Anything good</span>
+          <span class="chip" data-v="action">Hype & Action</span>
+          <span class="chip" data-v="emotional">Emotional</span>
+          <span class="chip" data-v="dark">Dark & Intense</span>
+          <span class="chip" data-v="chill">Chill & Relaxing</span>
+          <span class="chip" data-v="funny">Funny</span>
+          <span class="chip" data-v="romance">Romance</span>
+          <span class="chip" data-v="mindbending">Mind-bending</span>
+        </div>
+      </div>
+
+      <div class="q-section">
+        <div class="q-label">Format</div>
+        <div class="chips" id="fy-len-chips">
+          <span class="chip" data-type="">Any</span>
+          <span class="chip" data-type="tv">TV Series</span>
+          <span class="chip" data-type="movie">Movie</span>
+          <span class="chip" data-type="ova">OVA</span>
+        </div>
+      </div>
+
+      <button class="rec-btn" id="fy-btn" onclick="getForYou()">✦ &nbsp;Get My Recommendations</button>
+      <div id="fy-status"></div>
+      <div id="fy-results"></div>
     </div>
   </div>
 </div>
@@ -365,10 +440,15 @@
   // ── TABS ──
   function switchTab(name) {
     document.querySelectorAll(".tab").forEach((t,i) =>
-      t.classList.toggle("active",(name==="list"&&i===0)||(name==="rec"&&i===1))
+      t.classList.toggle("active",
+        (name==="list"   &&i===0)||
+        (name==="rec"    &&i===1)||
+        (name==="foryou" &&i===2)
+      )
     );
-    document.getElementById("panel-list").classList.toggle("active", name==="list");
-    document.getElementById("panel-rec").classList.toggle("active", name==="rec");
+    document.getElementById("panel-list").classList.toggle("active",   name==="list");
+    document.getElementById("panel-rec").classList.toggle("active",    name==="rec");
+    document.getElementById("panel-foryou").classList.toggle("active", name==="foryou");
   }
 
   // ── CHIPS ──
@@ -416,11 +496,14 @@
     }, 420);
   }
 
-  function setSort(btn, mode) {
-    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
+  function setSort(mode) {
     recSortMode = mode;
     renderRecResults();
+  }
+
+  function setRecSort(mode) {
+    recSortRec = mode;
+    renderRecGrid();
   }
 
   function sortRecData(data) {
@@ -660,13 +743,6 @@
     recAllData = [];
   }
 
-  function setRecSort(btn, mode) {
-    document.querySelectorAll("#rec-sort-bar .filter-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    recSortRec = mode;
-    renderRecGrid();
-  }
-
   function sortRecAnime(data) {
     const arr = [...data];
     switch (recSortRec) {
@@ -881,6 +957,185 @@
   }
   function closeModalOutside(e) { if(e.target===document.getElementById("overlay"))closeModal(); }
   document.addEventListener("keydown", e => { if(e.key==="Escape")closeModal(); });
+
+  // ── FOR YOU ──────────────────────────────────────────────
+  const LS_LOVED = "0xa7_loved";
+  let loved = JSON.parse(localStorage.getItem(LS_LOVED) || "[]");
+  let lovedSearchTimer = null;
+
+  function saveAll() { save(); localStorage.setItem(LS_LOVED, JSON.stringify(loved)); }
+
+  // Chips for For You panel
+  document.querySelectorAll("#fy-mood-chips .chip").forEach(c =>
+    c.addEventListener("click", () => {
+      document.querySelectorAll("#fy-mood-chips .chip").forEach(x => x.classList.remove("sel-fy-mood"));
+      c.classList.add("sel-fy-mood");
+    })
+  );
+  document.querySelectorAll("#fy-len-chips .chip").forEach(c =>
+    c.addEventListener("click", () => {
+      document.querySelectorAll("#fy-len-chips .chip").forEach(x => x.classList.remove("sel-fy-len"));
+      c.classList.add("sel-fy-len");
+    })
+  );
+
+  // Loved search
+  function debounceLoved(q) {
+    clearTimeout(lovedSearchTimer);
+    const el = document.getElementById("loved-results");
+    if (!q || q.length < 2) { el.style.display="none"; return; }
+    lovedSearchTimer = setTimeout(() => searchLoved(q), 420);
+  }
+
+  async function searchLoved(q) {
+    const el = document.getElementById("loved-results");
+    el.style.display = "block";
+    el.innerHTML = `<div style="padding:.65rem 1rem;color:var(--dim);font-size:.82rem">Searching...</div>`;
+    try {
+      const r = await fetch(`${JIKAN}/anime?q=${encodeURIComponent(q)}&limit=6&sfw=true`);
+      const d = await r.json();
+      if (!d.data?.length) { el.innerHTML=`<div style="padding:.65rem 1rem;color:var(--dim);font-size:.82rem">No results.</div>`; return; }
+      el.innerHTML = d.data.map(a=>`
+        <div class="search-item" onclick="addLoved(${a.mal_id},'${esc(a.title)}','${esc(a.images?.jpg?.image_url||'')}')">
+          <img src="${a.images?.jpg?.image_url||''}" alt="" onerror="this.style.opacity=0">
+          <div style="min-width:0;flex:1">
+            <div class="si-title">${a.title}</div>
+            <div class="si-meta">${a.type||"?"} · ${a.episodes||"?"} eps · ${a.aired?.prop?.from?.year||"?"}</div>
+          </div>
+          <div class="si-score">${a.score||"—"}</div>
+        </div>`).join("");
+    } catch { el.innerHTML=`<div style="padding:.65rem 1rem;color:var(--red);font-size:.82rem">Search failed.</div>`; }
+  }
+
+  function addLoved(id, title, img) {
+    if (loved.find(x=>x.id===id)) { hideLoved(); return; }
+    loved.push({id, title, img});
+    saveAll(); renderLoved(); hideLoved();
+    document.getElementById("loved-search").value = "";
+  }
+
+  function removeLoved(id) { loved=loved.filter(x=>x.id!==id); saveAll(); renderLoved(); }
+
+  function clearLoved() {
+    if (!confirm("Clear your loved anime list?")) return;
+    loved=[]; saveAll(); renderLoved();
+  }
+
+  function hideLoved() {
+    const el=document.getElementById("loved-results");
+    el.style.display="none"; el.innerHTML="";
+  }
+
+  function renderLoved() {
+    const g = document.getElementById("loved-grid");
+    const c = document.getElementById("loved-count");
+    if(c) c.textContent = loved.length ? `(${loved.length})` : "";
+    if (!loved.length) {
+      g.innerHTML=`<div class="empty-state">Add anime you've loved above.<br>The more you add, the better the recommendations.</div>`;
+      return;
+    }
+    g.innerHTML = loved.map(item=>`
+      <div class="anime-card" onclick="openModal(${item.id})">
+        <img src="${item.img}" alt="${item.title}" onerror="this.style.opacity=0">
+        <span class="ac-badge fav" style="background:rgba(231,76,60,.85);color:#fff">❤️</span>
+        <button class="ac-remove" onclick="event.stopPropagation();removeLoved(${item.id})">✕</button>
+        <div class="ac-title">${item.title}</div>
+      </div>`).join("");
+  }
+
+  // For You recommendation engine
+  async function getForYou() {
+    const moodChip = document.querySelector("#fy-mood-chips .chip.sel-fy-mood");
+    const lenChip  = document.querySelector("#fy-len-chips .chip.sel-fy-len");
+    const mood      = moodChip ? moodChip.dataset.v    : "any";
+    const mediaType = lenChip  ? lenChip.dataset.type  : "";
+
+    const btn    = document.getElementById("fy-btn");
+    const status = document.getElementById("fy-status");
+    const area   = document.getElementById("fy-results");
+
+    btn.disabled = true; area.innerHTML = "";
+    status.innerHTML = `<div class="loading-state"><span class="dot"></span><span class="dot"></span><span class="dot"></span><br>Finding anime for you...</div>`;
+
+    const excludeIds = new Set(loved.map(x=>x.id));
+
+    try {
+      // Pull MAL's own similar recommendations for each loved anime in parallel
+      const simMap  = new Map(); // mal_id -> {entry, votes}
+      if (loved.length) {
+        const fetches = await Promise.allSettled(
+          loved.map(w => fetch(`${JIKAN}/anime/${w.id}/recommendations`).then(r=>r.json()))
+        );
+        fetches.forEach(r => {
+          if (r.status!=="fulfilled") return;
+          (r.value.data||[]).forEach(x => {
+            const id = x.entry.mal_id;
+            if (excludeIds.has(id)) return;
+            if (simMap.has(id)) simMap.get(id).votes++;
+            else simMap.set(id, { entry: x.entry, votes: 1 });
+          });
+        });
+      }
+
+      // Convert map to array, sort by votes then score
+      let results = [...simMap.values()]
+        .sort((a,b) => (b.votes - a.votes) || ((b.entry.score||0)-(a.entry.score||0)))
+        .map(x=>x.entry);
+
+      // If no loved anime or too few results, fall back to top MAL picks
+      if (results.length < 8) {
+        const moodGenreMap = {
+          action:"1", emotional:"8", dark:"40", chill:"36",
+          funny:"4", romance:"22", mindbending:"7", any:""
+        };
+        const genreId = moodGenreMap[mood] || "";
+        let params = `order_by=score&sort=desc&limit=24&sfw=true`;
+        if (genreId)   params += `&genres=${genreId}`;
+        if (mediaType) params += `&type=${mediaType}`;
+        const r = await fetch(`${JIKAN}/anime?${params}`);
+        const d = await r.json();
+        const extra = (d.data||[]).filter(a => !excludeIds.has(a.mal_id) && !results.find(x=>x.mal_id===a.mal_id));
+        results = [...results, ...extra];
+      }
+
+      // Apply mood genre filter on similar results if mood selected
+      if (mood !== "any" && loved.length) {
+        const moodToGenre = { action:[1,2], emotional:[8,22], dark:[40,14,41], chill:[36,4], funny:[4], romance:[22], mindbending:[7,40] };
+        const wanted = moodToGenre[mood] || [];
+        if (wanted.length) {
+          const filtered = results.filter(a => (a.genres||[]).some(g=>wanted.includes(g.id)));
+          if (filtered.length >= 4) results = filtered;
+        }
+      }
+
+      // Apply format filter
+      if (mediaType) results = results.filter(a => !a.type || a.type.toLowerCase()===mediaType);
+
+      status.innerHTML = ""; btn.disabled = false;
+
+      if (!results.length) {
+        status.innerHTML = `<div class="err">No results found. Try adding more loved anime or changing the mood.</div>`;
+        return;
+      }
+
+      const moodLabel = moodChip ? moodChip.textContent : "All";
+      area.innerHTML = `
+        <div class="results-section" style="margin-top:1.5rem">
+          <div class="results-heading">
+            <span>Recommended for you — ${moodLabel}</span>
+            <button onclick="getForYou()" style="background:none;border:none;color:var(--purple);cursor:pointer;font-size:.78rem;font-family:'Inter',sans-serif">↺ Refresh</button>
+          </div>
+          <div class="results-grid">${results.slice(0,24).map(posterCard).join("")}</div>
+        </div>`;
+
+    } catch(e) {
+      status.innerHTML = `<div class="err">Something went wrong. Please try again.</div>`;
+      btn.disabled = false;
+    }
+  }
+
+  // Init loved list on load
+  renderLoved();
 </script>
 </body>
 </html>
